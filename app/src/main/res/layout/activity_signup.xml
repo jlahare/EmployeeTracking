@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
-    android:padding="5dp"
+    android:background="@android:color/white"
+    android:padding="@dimen/padding_5"
     tools:context="com.yash.employeetrack.LoginActivity">
 
     <!-- Login progress -->
@@ -14,8 +14,26 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
-        android:layout_margin="5dp"
-        android:padding="15dp">
+        android:layout_margin="@dimen/margin_5"
+        android:padding="@dimen/login_screen_padding_15">
+
+
+        <ImageView
+            android:id="@+id/user_image"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/yash_image" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="Choose file"
+            android:layout_toRightOf="@id/user_image"
+            android:textSize="16dp"
+            android:textColor="@color/colorPrimary"
+            android:layout_above="@id/name"
+            android:layout_height="wrap_content" />
 
         <EditText
             android:id="@+id/name"
@@ -23,14 +41,14 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
+            android:layout_below="@id/user_image"
             android:background="@android:drawable/editbox_background"
             android:drawableLeft="@drawable/ic_person"
-            android:drawablePadding="10dp"
-            android:hint="Name"
+            android:drawablePadding="@dimen/drawable_padding_10dp"
+            android:hint="@string/name_hint"
             android:inputType="text"
             android:maxLines="1"
-            android:padding="10dp"
+            android:padding="@dimen/drawable_padding_10dp"
             android:singleLine="true"
             android:textColor="@android:color/black"
             android:textColorHint="@color/colorPrimary" />
@@ -40,10 +58,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/email"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="15dp"
-            android:text="Gender"
-            android:textColor="@android:color/white"
+            android:layout_marginLeft="@dimen/margin_5"
+            android:layout_marginTop="@dimen/margin_15"
+            android:text="@string/gender"
+            android:textColor="@color/colorPrimary"
             android:textSize="17dp"
             android:textStyle="bold" />
 
@@ -52,7 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_gender"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="@dimen/margin_15"
             android:orientation="horizontal">
 
             <RadioButton
@@ -61,8 +79,8 @@
                 android:layout_marginRight="20dp"
                 android:background="@android:drawable/editbox_background"
                 android:buttonTint="@color/colorPrimary"
-                android:padding="10dp"
-                android:text="Male"
+                android:padding="@dimen/drawable_padding_10dp"
+                android:text="@string/male"
                 android:textColor="@color/colorPrimary" />
 
             <RadioButton
@@ -71,19 +89,19 @@
                 android:layout_marginRight="20dp"
                 android:background="@android:drawable/editbox_background"
                 android:buttonTint="@color/colorPrimary"
-                android:padding="10dp"
-                android:text="Female"
+                android:padding="@dimen/drawable_padding_10dp"
+                android:text="@string/female"
                 android:textColor="@color/colorPrimary" />
 
-            <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:background="@android:drawable/editbox_background"
-                android:buttonTint="@color/colorPrimary"
-                android:padding="10dp"
-                android:text="Other"
-                android:textColor="@color/colorPrimary" />
+            <!--  <RadioButton
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginLeft="20dp"
+                  android:background="@android:drawable/editbox_background"
+                  android:buttonTint="@color/colorPrimary"
+                  android:padding="@dimen/drawable_padding_10dp"
+                  android:text="@string/other"
+                  android:textColor="@color/colorPrimary" />-->
         </RadioGroup>
 
         <EditText
@@ -91,14 +109,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/name"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/margin_10"
             android:background="@android:drawable/editbox_background"
             android:drawableLeft="@drawable/ic_email"
-            android:drawablePadding="10dp"
-            android:hint="Email"
+            android:drawablePadding="@dimen/drawable_padding_10dp"
+            android:hint="@string/prompt_email"
             android:inputType="textEmailAddress"
             android:maxLines="1"
-            android:padding="10dp"
+            android:padding="@dimen/drawable_padding_10dp"
             android:singleLine="true"
             android:textColor="@android:color/black"
             android:textColorHint="@color/colorPrimary" />
@@ -109,15 +127,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/group_gender"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/margin_10"
             android:background="@android:drawable/editbox_background"
             android:drawableLeft="@drawable/ic_lock"
-            android:drawablePadding="10dp"
+            android:drawablePadding="@dimen/drawable_padding_10dp"
             android:hint="@string/prompt_password"
             android:imeActionLabel="@string/action_sign_in_short"
             android:inputType="textPassword"
             android:maxLines="1"
-            android:padding="10dp"
+            android:padding="@dimen/drawable_padding_10dp"
             android:singleLine="true"
             android:textColor="@android:color/black"
             android:textColorHint="@color/colorPrimary" />
@@ -128,15 +146,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/password"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/margin_10"
             android:background="@android:drawable/editbox_background"
             android:drawableLeft="@drawable/ic_lock"
-            android:drawablePadding="10dp"
-            android:hint="Confirm Password"
+            android:drawablePadding="@dimen/drawable_padding_10dp"
+            android:hint="@string/confirm_password"
             android:imeActionLabel="@string/action_sign_in_short"
             android:inputType="textPassword"
             android:maxLines="1"
-            android:padding="10dp"
+            android:padding="@dimen/drawable_padding_10dp"
             android:singleLine="true"
             android:textColor="@android:color/black"
             android:textColorHint="@color/colorPrimary" />
@@ -149,11 +167,11 @@
             android:layout_below="@id/confirm_password"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:padding="5dp"
+            android:layout_marginTop="@dimen/margin_10"
+            android:padding="@dimen/padding_5"
             android:text="@string/sign_up"
             android:textAllCaps="false"
-            android:textColor="@android:color/white"
+            android:textColor="@color/colorPrimary"
             android:textStyle="bold" />
 
     </RelativeLayout>

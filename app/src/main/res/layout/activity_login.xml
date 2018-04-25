@@ -2,8 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimary"
-    android:padding="5dp"
+    android:background="@android:color/white"
+    android:padding="@dimen/login_screen_main_layout_padding"
     tools:context="com.yash.employeetrack.LoginActivity">
 
     <!-- Login progress -->
@@ -14,8 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerInParent="true"
-        android:layout_margin="5dp"
-        android:padding="15dp">
+        android:layout_margin="@dimen/login_screen_main_layout_margin"
+        android:padding="@dimen/login_screen_padding_15">
 
         <EditText
             android:id="@+id/email"
@@ -26,11 +26,11 @@
             android:layout_alignParentTop="true"
             android:background="@android:drawable/editbox_background"
             android:drawableLeft="@drawable/ic_email"
-            android:drawablePadding="10dp"
+            android:drawablePadding="@dimen/drawable_padding_10dp"
             android:hint="@string/prompt_email"
             android:inputType="textEmailAddress"
             android:maxLines="1"
-            android:padding="10dp"
+            android:padding="@dimen/drawable_padding_10dp"
             android:singleLine="true"
             android:textColor="@android:color/black"
             android:textColorHint="@color/colorPrimary" />
@@ -41,15 +41,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/email"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="@dimen/margin_10"
             android:background="@android:drawable/editbox_background"
             android:drawableLeft="@drawable/ic_lock"
-            android:drawablePadding="10dp"
+            android:drawablePadding="@dimen/drawable_padding_10dp"
             android:hint="@string/prompt_password"
             android:imeActionLabel="@string/action_sign_in_short"
             android:inputType="textPassword"
             android:maxLines="1"
-            android:padding="10dp"
+            android:padding="@dimen/drawable_padding_10dp"
             android:singleLine="true"
             android:textColor="@android:color/black"
             android:textColorHint="@color/colorPrimary" />
@@ -62,11 +62,11 @@
             android:layout_below="@id/password"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:padding="5dp"
+            android:layout_marginTop="@dimen/margin_10"
+            android:padding="@dimen/padding_5"
             android:text="@string/action_sign_in"
             android:textAllCaps="false"
-            android:textColor="@android:color/white"
+            android:textColor="@color/colorPrimary"
             android:textStyle="bold" />
 
     </RelativeLayout>
@@ -78,12 +78,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="5dp"
-        android:padding="5dp"
-        android:text="Forget Password?"
+        android:layout_marginLeft="@dimen/margin_15"
+        android:layout_marginTop="@dimen/margin_5"
+        android:padding="@dimen/padding_5"
+        android:text="@string/forget_password"
         android:textAllCaps="false"
-        android:textColor="@android:color/white"
+        android:textColor="@color/colorPrimary"
         android:textStyle="bold" />
 
     <Button
@@ -94,13 +94,13 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_gravity="end"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginRight="@dimen/margin_15"
+        android:layout_marginTop="@dimen/margin_5"
         android:gravity="center"
-        android:padding="5dp"
+        android:padding="@dimen/padding_5"
         android:text="@string/sign_up"
         android:textAllCaps="false"
-        android:textColor="@android:color/white"
+        android:textColor="@color/colorPrimary"
         android:textStyle="bold" />
 
 </RelativeLayout>
