@@ -20,8 +20,8 @@
 
         <ImageView
             android:id="@+id/user_image"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="@dimen/user_img_width"
+            android:layout_height="@dimen/user_img_width"
             android:layout_alignParentTop="true"
             android:background="@drawable/yash_image" />
 
