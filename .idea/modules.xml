@@ -3,8 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://G:\EmployeeTracking_Source\EmployeeTrack.iml" filepath="G:\EmployeeTracking_Source\EmployeeTrack.iml" />
-      <module fileurl="file://$PROJECT_DIR$/EmployeeTracking_Source.iml" filepath="$PROJECT_DIR$/EmployeeTracking_Source.iml" />
+      <module fileurl="file://E:\Beacon_technology\beacon\EmployeeTracking_Source.iml" filepath="E:\Beacon_technology\beacon\EmployeeTracking_Source.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/beacon.iml" filepath="$PROJECT_DIR$/beacon.iml" />
     </modules>
   </component>
 </project>
