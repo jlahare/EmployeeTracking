@@ -26,4 +26,5 @@
     <string name="contact_no">Contact No</string>
     <string name="designation">Designation</string>
     <string name="business_unit">Business Unit</string>
+    <string name="save">Save</string>
 </resources>

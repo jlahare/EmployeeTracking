@@ -36,23 +36,20 @@ public class SignUpActivity extends AppCompatActivity {
 
     Bitmap myBitmap;
     Uri picUri;
-
     ImageView profile_pic;
     TextView image_picker;
 
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
-
-
-
     private final static int ALL_PERMISSIONS_RESULT = 107;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        image_picker= findViewById(R.id.image_picker);
-        profile_pic= findViewById(R.id.profile_pic);
+        image_picker = findViewById(R.id.image_picker);
+        profile_pic = findViewById(R.id.profile_pic);
         image_picker.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -68,6 +65,7 @@ public class SignUpActivity extends AppCompatActivity {
                 requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
         }
     }
+
     public Intent getPickImageChooserIntent() {
         // Determine Uri of camera image to save.
         Uri outputFileUri = getCaptureImageOutputUri();// file:///storage/emulated/0/Android/data/com.journaldev.imagepicker/cache/EmployeeProfile.png
@@ -113,6 +111,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         return chooserIntent;
     }
+
     private Uri getCaptureImageOutputUri() {
         Uri outputFileUri = null;
         File getImage = getExternalCacheDir();
@@ -121,6 +120,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
         return outputFileUri;
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         //200, -1, null
@@ -130,14 +130,14 @@ public class SignUpActivity extends AppCompatActivity {
             // ImageView imageView = (ImageView) findViewById(R.id.imageView);
             if (getPickImageResultUri(data) != null) {
                 picUri = getPickImageResultUri(data);
-                Log.i("File PATH",""+picUri);
+                Log.i("File PATH", "" + picUri);
                 // Toast.makeText(SignUpActivity.this,""+picUri,Toast.LENGTH_LONG).show();
                 try {
                     myBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), picUri);
                     myBitmap = getResizedBitmap(myBitmap, 500);
                     CircleImageView croppedImageView = (CircleImageView) findViewById(R.id.profile_pic);
                     croppedImageView.setImageBitmap(myBitmap);
-                  //  profile_pic.setImageBitmap(myBitmap);
+                    //  profile_pic.setImageBitmap(myBitmap);
                 } catch (IOException e) {
 
                 }
@@ -148,11 +148,12 @@ public class SignUpActivity extends AppCompatActivity {
                 if (croppedImageView != null) {
                     croppedImageView.setImageBitmap(myBitmap);
                 }
-              //  profile_pic.setImageBitmap(myBitmap);
+                //  profile_pic.setImageBitmap(myBitmap);
             }
 
         }
     }
+
     public Uri getPickImageResultUri(Intent data) {
         boolean isCamera = true;
         if (data != null) {
@@ -161,6 +162,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
         return isCamera ? getCaptureImageOutputUri() : data.getData();
     }
+
     public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
         int height = image.getHeight();
@@ -217,6 +219,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
     }
+
     private boolean hasPermission(String permission) {
         if (canMakeSmores()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -234,9 +237,11 @@ public class SignUpActivity extends AppCompatActivity {
                 .create()
                 .show();
     }
+
     private boolean canMakeSmores() {
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
+
     private ArrayList<String> findUnAskedPermissions(ArrayList<String> wanted) {
         ArrayList<String> result = new ArrayList<String>();
 
