@@ -97,7 +97,7 @@ public class SignUpActivity extends AppCompatActivity {
             intent.setPackage(res.activityInfo.packageName);
             allIntents.add(intent);
         }
-        // the main intent is the last in the list (fucking android) so pickup the useless one
+
         Intent mainIntent = allIntents.get(allIntents.size() - 1);
         for (Intent intent : allIntents) {
             if (intent.getComponent().getClassName().equals("com.android.documentsui.DocumentsActivity")) {
