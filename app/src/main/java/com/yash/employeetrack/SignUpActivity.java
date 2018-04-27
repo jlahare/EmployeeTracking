@@ -17,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -38,6 +39,7 @@ public class SignUpActivity extends AppCompatActivity {
     Uri picUri;
     ImageView profile_pic;
     TextView image_picker;
+    Button save;
 
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
@@ -48,6 +50,7 @@ public class SignUpActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
+        save = findViewById(R.id.signUp);
         image_picker = findViewById(R.id.image_picker);
         profile_pic = findViewById(R.id.profile_pic);
         image_picker.setOnClickListener(new View.OnClickListener() {
@@ -68,8 +71,14 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 BeaconNotifier.show(SignUpActivity.this.getApplicationContext());
+                startService();
             }
         });
+       //startService();
+    }
+
+    public void startService() {
+        startService(new Intent(getBaseContext(), Sender.class));
     }
 
     public Intent getPickImageChooserIntent() {
@@ -124,7 +133,6 @@ public class SignUpActivity extends AppCompatActivity {
         if (getImage != null) {
             outputFileUri = Uri.fromFile(new File(getImage.getPath(), "EmployeeProfile.png"));
         }
-
 
 
         return outputFileUri;

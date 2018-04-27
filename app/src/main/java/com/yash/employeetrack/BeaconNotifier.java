@@ -13,19 +13,17 @@ import java.lang.ref.WeakReference;
  * Created by jayesh.lahare on 4/27/2018.
  */
 
-public final class BeaconNotifier
-{
+public final class BeaconNotifier {
     private static WeakReference<Context> weakContext;
 
     private static int notificationId = 1001;
     private static NotificationCompat.Builder mBuilder;
 
-    public static void show(Context context)
-    {
+    public static void show(Context context) {
         weakContext = new WeakReference(context);
 
         mBuilder = new NotificationCompat.Builder(context, "EMP_TRACKING")
-                .setSmallIcon(R.drawable.one)
+                .setSmallIcon(R.drawable.ic_ibeacon_green)
                 .setContentTitle("Beacon")
                 .setContentText("Sending data")
                 .setAutoCancel(true)
@@ -36,16 +34,12 @@ public final class BeaconNotifier
         blink();
     }
 
-    private static void blink()
-    {
-        Thread t = new Thread()
-        {
-            public void run()
-            {
+    private static void blink() {
+        Thread t = new Thread() {
+            public void run() {
                 try {
-                    for (int i = 0; i < 10; i++)
-                    {
-                        Log.e("Test" , " - " + i);
+                    for (int i = 0; i < 10; i++) {
+                        Log.e("Test", " - " + i);
                         handler.sendMessage(handler.obtainMessage());
                        /* synchronized (mBuilder) {
                             mBuilder.setSmallIcon(R.drawable.blinker_sending);
@@ -54,28 +48,26 @@ public final class BeaconNotifier
                         sleep(1000);
                     }
 
-                }catch (Throwable t)
-                {
-                    Log.e("Issue" , "Error : " + t.toString());
+                } catch (Throwable t) {
+                    Log.e("Issue", "Error : " + t.toString());
                 }
                 cancelNotification();
             }
         };
         t.start();
     }
-    private static int i =0;
-    private static Handler handler = new Handler()
-    {
+
+    private static int i = 0;
+    private static Handler handler = new Handler() {
         @Override
-        public void handleMessage(Message msg)
-        {
+        public void handleMessage(Message msg) {
             try {
                 switch (i) {
                     case 0:
-                        mBuilder.setSmallIcon(R.drawable.one);
+                        mBuilder.setSmallIcon(R.drawable.ic_ibeacon_green);
                         break;
                     case 1:
-                        mBuilder.setSmallIcon(R.drawable.two);
+                        mBuilder.setSmallIcon(R.drawable.ic_ibeacon_green_big);
                         break;
                 }
 
@@ -85,21 +77,18 @@ public final class BeaconNotifier
 
                 NotificationManagerCompat notificationManager = NotificationManagerCompat.from(weakContext.get().getApplicationContext());
                 notificationManager.notify(notificationId, mBuilder.build());
-            }catch (Throwable throwable)
-            {
-                Log.e("Error " , "" + throwable.toString());
+            } catch (Throwable throwable) {
+                Log.e("Error ", "" + throwable.toString());
             }
         }
     };
 
-    public static void cancelNotification()
-    {
+    public static void cancelNotification() {
         try {
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(weakContext.get().getApplicationContext());
             notificationManager.cancelAll();
-        }catch (Throwable throwable)
-        {
-            Log.e("Cancel Error " , "" + throwable.toString());
+        } catch (Throwable throwable) {
+            Log.e("Cancel Error ", "" + throwable.toString());
         }
     }
 }
