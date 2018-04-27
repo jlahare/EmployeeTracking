@@ -64,6 +64,12 @@ public class SignUpActivity extends AppCompatActivity {
             if (permissionsToRequest.size() > 0)
                 requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
         }
+        findViewById(R.id.signUp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BeaconNotifier.show(SignUpActivity.this.getApplicationContext());
+            }
+        });
     }
 
     public Intent getPickImageChooserIntent() {
@@ -118,6 +124,9 @@ public class SignUpActivity extends AppCompatActivity {
         if (getImage != null) {
             outputFileUri = Uri.fromFile(new File(getImage.getPath(), "EmployeeProfile.png"));
         }
+
+
+
         return outputFileUri;
     }
 
