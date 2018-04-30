@@ -2,6 +2,7 @@ package com.yash.employeetrack;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,14 +13,17 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
+import android.util.Pair;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +33,11 @@ import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.yash.employeetrack.http.JNetworkConstants;
+import com.yash.employeetrack.http.JNetworkHandler;
+
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -50,12 +59,10 @@ public class SignUpActivity extends AppCompatActivity {
 
     private static final int REQUEST_CAMERA = 200;
     private static final int SELECT_FILE = 201;
-    public static String imagepath = null;
 
-    Bitmap myBitmap;
-    String  picUri;
+
     ImageView profile_pic;
-    TextView image_picker;
+
     Button save;
 
     private ArrayList<String> permissionsToRequest;
@@ -68,21 +75,17 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         save = findViewById(R.id.signUp);
-        image_picker = findViewById(R.id.image_picker);
         profile_pic = findViewById(R.id.profile_pic);
-        image_picker.setOnClickListener(new View.OnClickListener() {
+        profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
             {
-               // startActivityForResult(getPickImageChooserIntent(), 200);
-                //showPopup();
                 selectImage();
             }
         });
         permissions.add(CAMERA);
         permissionsToRequest = findUnAskedPermissions(permissions);
-        //get the permissions we have asked for before but are not granted..
-        //we will store this in a global list to access later.
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (permissionsToRequest.size() > 0)
                 requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
@@ -94,46 +97,49 @@ public class SignUpActivity extends AppCompatActivity {
                 startService();
             }
         });
+        findViewById(R.id.signUp).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendToServer();
+            }
+        });
         //startService();
     }
-
-    PopupWindow popupWindow;
-    private void showPopup()
+    private void sendToServer()
     {
+        try {
+            String id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+            String url = JNetworkConstants.BASE_URL + JNetworkConstants.REGISTER_URL;
 
-        LayoutInflater layoutInflater = (LayoutInflater) SignUpActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View customView = layoutInflater.inflate(R.layout.popup_layout,null);
+            JSONObject json = new JSONObject();
+            json.put("businessUnit", "B4");
+            json.put("contactNo", "9912345678");
+            json.put("designation", "TL");
+            json.put("deviceId", "123456700");
+            json.put("email", "test@gmail.com");
+            json.put("empId", 1999);
+            json.put("empPhoto", Utils.base64Image);
+            json.put("firstName", "Albert");
+            json.put("gender", "male");
+            json.put("lastName", "Dicosta");
 
-        Button cameraBtn = (Button) customView.findViewById(R.id.cameraBtn);
-        Button galleryBtn = (Button) customView.findViewById(R.id.galleryBtn);
-        Button cancelBtn = (Button) customView.findViewById(R.id.cancelBtn);
+            Log.i("JSON" , json.toString());
 
-        //instantiate popup window
-        popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            JNetworkHandler network = new JNetworkHandler(this, url, json.toString(), networkListener);
+            network.execute("");
+        }catch (Throwable throwable)
+        {
 
-        //display the popup window
-        popupWindow.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+        }
 
-        //close the popup window on button click
-        cameraBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
-            }
-        });
-        galleryBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
-            }
-        });
-        cancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                popupWindow.dismiss();
-            }
-        });
     }
+    JNetworkHandler.NetworkListener networkListener = new JNetworkHandler.NetworkListener() {
+        @Override
+        public void onNetworkResponse(Pair<String, String> response) {
+            Log.i("FIRST" , response.first);
+            Log.i("SECOND" , response.second);
+        }
+    };
 
     private void selectImage()
     {
@@ -237,6 +243,10 @@ public class SignUpActivity extends AppCompatActivity {
 
         CircleImageView croppedImageView = (CircleImageView) findViewById(R.id.profile_pic);
         croppedImageView.setImageBitmap(bitmap);
+
+        Utils.byteBitmap = bitmap;
+        ByteTask task = new ByteTask(SignUpActivity.this);
+        task.execute("");
     }
 
 
@@ -330,6 +340,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
         return result;
     }
+    private static Bitmap byteBitmap = null;
 
     public static String encodeFromString(Bitmap bm){
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -337,4 +348,64 @@ public class SignUpActivity extends AppCompatActivity {
         byte[] b = baos.toByteArray();
         return Base64.encodeToString(b, Base64.DEFAULT);
     }
+
+
+    class ByteTask extends AsyncTask<String,String,String>
+    {
+
+        ProgressDialog dialog;
+        Context context;
+
+        public ByteTask(Context ctx ) {
+            dialog = new ProgressDialog(ctx);
+            dialog.setMessage("Loading Image, Please wait..");
+            context = ctx;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            try {
+                dialog.show();
+            }catch (Throwable t){}
+        }
+
+
+        @Override
+        protected String doInBackground(String... strings)
+        {
+            try
+            {
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    Utils.byteBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
+                    byte[] b = baos.toByteArray();
+                    baos.close();
+
+                    return Base64.encodeToString(b, Base64.DEFAULT);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s)
+        {
+            super.onPostExecute(s);
+            try
+            {
+                if(s==null)
+                {
+                    Toast.makeText(context , "Error converting image, try again !!!" ,Toast.LENGTH_LONG).show();
+                }else
+                {
+                    Toast.makeText(context , "Picture captured successfully !!!" ,Toast.LENGTH_LONG).show();
+                }
+                Utils.base64Image = s;
+                dialog.hide();
+            }catch (Throwable t){}
+        }
+    }
+
 }

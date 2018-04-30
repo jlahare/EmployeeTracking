@@ -30,14 +30,6 @@
                 app:civ_border_color="#757575"
                 app:civ_border_width="2dp" />
 
-            <TextView
-                android:id="@+id/image_picker"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/margin_15"
-                android:text="Select Picture"
-                android:textColor="@color/gray_color" />
         </LinearLayout>
 
         <LinearLayout
