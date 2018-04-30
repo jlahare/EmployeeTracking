@@ -92,13 +92,13 @@ public class SignUpActivity extends AppCompatActivity {
             if (permissionsToRequest.size() > 0)
                 requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
         }
-        findViewById(R.id.signUp).setOnClickListener(new View.OnClickListener() {
+       /* findViewById(R.id.signUp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 BeaconNotifier.show(SignUpActivity.this.getApplicationContext());
                 startService();
             }
-        });
+        });*/
         findViewById(R.id.signUp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,7 +132,7 @@ public class SignUpActivity extends AppCompatActivity {
             json.put("businessUnit", getStr(R.id.business_unit));
             json.put("contactNo", getStr(R.id.contact_no));
             json.put("designation", getStr(R.id.designation));
-            json.put("deviceId", "123456700");
+            json.put("deviceId", Utils.getDeviceId(this));
             json.put("email", getStr(R.id.email));
             json.put("empId", Integer.parseInt(getStr(R.id.emp_id)));
             json.put("empPhoto", Utils.base64Image);
@@ -155,6 +155,12 @@ public class SignUpActivity extends AppCompatActivity {
         public void onNetworkResponse(Pair<String, String> response) {
             Log.i("FIRST" , response.first);
             Log.i("SECOND" , response.second);
+            if(response.second.equalsIgnoreCase(JNetworkConstants.NETWORK_SUCCESS))
+            {
+                //START SERVICE.
+                //SignUpActivity.this.startService(intent);
+                SignUpActivity.this.startService(new Intent(SignUpActivity.this, Sender.class));
+            }
         }
     };
 
@@ -370,12 +376,12 @@ public class SignUpActivity extends AppCompatActivity {
     class ByteTask extends AsyncTask<String,String,String>
     {
 
-        ProgressDialog dialog;
+        //ProgressDialog dialog;
         Context context;
 
         public ByteTask(Context ctx ) {
-            dialog = new ProgressDialog(ctx);
-            dialog.setMessage("Loading Image, Please wait..");
+           // dialog = new ProgressDialog(ctx);
+           // dialog.setMessage("Loading Image, Please wait..");
             context = ctx;
         }
 
@@ -383,7 +389,7 @@ public class SignUpActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             try {
-                dialog.show();
+             //   dialog.show();
             }catch (Throwable t){}
         }
 
@@ -420,7 +426,7 @@ public class SignUpActivity extends AppCompatActivity {
                     Toast.makeText(context , "Picture captured successfully !!!" ,Toast.LENGTH_LONG).show();
                 }
                 Utils.base64Image = s;
-                dialog.hide();
+                //dialog.hide();
             }catch (Throwable t){}
         }
     }

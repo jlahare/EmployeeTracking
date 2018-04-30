@@ -193,11 +193,13 @@ public class JNetworkService
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
             conn.setReadTimeout(10000);
+
             conn.setConnectTimeout(15000);
             conn.setRequestMethod("POST");
             //conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
            // conn.setRequestProperty("Accept", "application/json");
-            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            //conn.setRequestProperty("Content-Type", "application/json");
 
             conn.setRequestProperty("Connection" , "keep-alive");
             //conn.setRequestProperty("User-Agent", "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36");
