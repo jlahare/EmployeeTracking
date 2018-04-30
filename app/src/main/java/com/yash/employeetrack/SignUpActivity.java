@@ -29,8 +29,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -105,6 +107,21 @@ public class SignUpActivity extends AppCompatActivity {
         });
         //startService();
     }
+
+
+    public String getStr(int rid)
+    {
+        return ((EditText)findViewById(rid)).getText().toString();
+    }
+
+    public String getGender()
+    {
+        boolean isMale = ((RadioButton)findViewById(R.id.maleRadio)).isChecked();
+
+        String s = (isMale==true ? "Male" : "Female");
+        return s;
+
+    }
     private void sendToServer()
     {
         try {
@@ -112,16 +129,16 @@ public class SignUpActivity extends AppCompatActivity {
             String url = JNetworkConstants.BASE_URL + JNetworkConstants.REGISTER_URL;
 
             JSONObject json = new JSONObject();
-            json.put("businessUnit", "B4");
-            json.put("contactNo", "9912345678");
-            json.put("designation", "TL");
+            json.put("businessUnit", getStr(R.id.business_unit));
+            json.put("contactNo", getStr(R.id.contact_no));
+            json.put("designation", getStr(R.id.designation));
             json.put("deviceId", "123456700");
-            json.put("email", "test@gmail.com");
-            json.put("empId", 1999);
+            json.put("email", getStr(R.id.email));
+            json.put("empId", Integer.parseInt(getStr(R.id.emp_id)));
             json.put("empPhoto", Utils.base64Image);
-            json.put("firstName", "Albert");
-            json.put("gender", "male");
-            json.put("lastName", "Dicosta");
+            json.put("firstName", getStr(R.id.first_name));
+            json.put("gender", getGender());
+            json.put("lastName", getStr(R.id.last_name));
 
             Log.i("JSON" , json.toString());
 
