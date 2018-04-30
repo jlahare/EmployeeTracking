@@ -75,6 +75,22 @@
         </LinearLayout>
 
         <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_10"
+            android:background="@android:drawable/editbox_background"
+            android:drawableLeft="@drawable/ic_email"
+            android:drawablePadding="@dimen/drawable_padding_10dp"
+            android:hint="@string/prompt_email"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:padding="@dimen/drawable_padding_10dp"
+            android:singleLine="true"
+            android:textColor="@color/gray_color"
+            android:textColorHint="@color/gray_color" />
+
+        <EditText
             android:id="@+id/emp_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -167,23 +183,6 @@
             android:drawableLeft="@drawable/ic_designation"
             android:drawablePadding="@dimen/drawable_padding_10dp"
             android:hint="@string/designation"
-            android:maxLines="1"
-            android:padding="@dimen/drawable_padding_10dp"
-            android:singleLine="true"
-            android:textColor="@color/gray_color"
-            android:textColorHint="@color/gray_color" />
-
-
-        <EditText
-            android:id="@+id/email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_10"
-            android:background="@android:drawable/editbox_background"
-            android:drawableLeft="@drawable/ic_email"
-            android:drawablePadding="@dimen/drawable_padding_10dp"
-            android:hint="@string/prompt_email"
-            android:inputType="textEmailAddress"
             android:maxLines="1"
             android:padding="@dimen/drawable_padding_10dp"
             android:singleLine="true"
