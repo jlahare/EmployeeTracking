@@ -3,11 +3,14 @@ package com.yash.employeetrack;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,15 +20,21 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +47,13 @@ import static android.Manifest.permission.CAMERA;
  */
 public class SignUpActivity extends AppCompatActivity {
 
+
+    private static final int REQUEST_CAMERA = 200;
+    private static final int SELECT_FILE = 201;
+    public static String imagepath = null;
+
     Bitmap myBitmap;
-    Uri picUri;
+    String  picUri;
     ImageView profile_pic;
     TextView image_picker;
     Button save;
@@ -58,8 +72,11 @@ public class SignUpActivity extends AppCompatActivity {
         profile_pic = findViewById(R.id.profile_pic);
         image_picker.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                startActivityForResult(getPickImageChooserIntent(), 200);
+            public void onClick(View v)
+            {
+               // startActivityForResult(getPickImageChooserIntent(), 200);
+                //showPopup();
+                selectImage();
             }
         });
         permissions.add(CAMERA);
@@ -80,112 +97,149 @@ public class SignUpActivity extends AppCompatActivity {
         //startService();
     }
 
+    PopupWindow popupWindow;
+    private void showPopup()
+    {
+
+        LayoutInflater layoutInflater = (LayoutInflater) SignUpActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View customView = layoutInflater.inflate(R.layout.popup_layout,null);
+
+        Button cameraBtn = (Button) customView.findViewById(R.id.cameraBtn);
+        Button galleryBtn = (Button) customView.findViewById(R.id.galleryBtn);
+        Button cancelBtn = (Button) customView.findViewById(R.id.cancelBtn);
+
+        //instantiate popup window
+        popupWindow = new PopupWindow(customView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        //display the popup window
+        popupWindow.showAtLocation(getWindow().getDecorView(), Gravity.CENTER, 0, 0);
+
+        //close the popup window on button click
+        cameraBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+        galleryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupWindow.dismiss();
+            }
+        });
+    }
+
+    private void selectImage()
+    {
+        final CharSequence[] items =
+                { "Camera", "Choose from Gallery" };
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
+        builder.setTitle("Select Picture");
+
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals("Camera"))
+                {
+                    File getImage = getExternalCacheDir();
+                    File file = new File(getImage.getPath(), "EmployeeProfile.png");
+
+                   /* Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+                    startActivityForResult(intent, REQUEST_CAMERA);*/
+
+                    PackageManager packageManager = getPackageManager();
+                    Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);// size 2(Camera,youcamperfect)
+
+                    List<Intent> allIntents = new ArrayList<>();
+                    for (ResolveInfo res : listCam) {
+                        Intent newIntent = new Intent(captureIntent);
+                        newIntent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+                        newIntent.setPackage(res.activityInfo.packageName);
+                        newIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+
+                        allIntents.add(newIntent);
+                    }
+
+                    Intent mainIntent = allIntents.get(allIntents.size() - 1);
+                    for (Intent nintent : allIntents) {
+                        if (nintent.getComponent().getClassName().equals("com.android.documentsui.DocumentsActivity")) {
+                            mainIntent = nintent;
+                            break;
+                        }
+                    }
+                    Intent chooserIntent = Intent.createChooser(mainIntent, "Select source");
+                    // Add all other intents
+                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, allIntents.toArray(new Parcelable[allIntents.size()]));
+                    startActivityForResult(chooserIntent, REQUEST_CAMERA);
+
+
+                } else if (items[item].equals("Choose from Gallery")) {
+                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    intent.setType("image/*");
+                    startActivityForResult(Intent.createChooser(intent, "Select File"), SELECT_FILE);
+                }
+            }
+        });
+        builder.show();
+    }
+
+
     public void startService() {
         startService(new Intent(getBaseContext(), Sender.class));
     }
 
-    public Intent getPickImageChooserIntent() {
-        // Determine Uri of camera image to save.
-        Uri outputFileUri = getCaptureImageOutputUri();// file:///storage/emulated/0/Android/data/com.journaldev.imagepicker/cache/EmployeeProfile.png
-        List<Intent> allIntents = new ArrayList<>();
-        PackageManager packageManager = getPackageManager();
 
-        // collect all camera intents
-        Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);// size 2(Camera,youcamperfect)
-        for (ResolveInfo res : listCam) {
-            Intent intent = new Intent(captureIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(res.activityInfo.packageName);
-            if (outputFileUri != null) {
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-            }
-            allIntents.add(intent);
-        }
-        // collect all gallery intents
-        //  Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        galleryIntent.setType("image/*");
-        List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
-        for (ResolveInfo res : listGallery) {
-            Intent intent = new Intent(galleryIntent);
-            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-            intent.setPackage(res.activityInfo.packageName);
-            allIntents.add(intent);
-        }
-
-        Intent mainIntent = allIntents.get(allIntents.size() - 1);
-        for (Intent intent : allIntents) {
-            if (intent.getComponent().getClassName().equals("com.android.documentsui.DocumentsActivity")) {
-                mainIntent = intent;
-                break;
-            }
-        }
-        allIntents.remove(mainIntent);
-        // Create a chooser from the main intent
-        Intent chooserIntent = Intent.createChooser(mainIntent, "Select source");
-        // Add all other intents
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, allIntents.toArray(new Parcelable[allIntents.size()]));
-
-        return chooserIntent;
-    }
-
-    private Uri getCaptureImageOutputUri() {
-        Uri outputFileUri = null;
-        File getImage = getExternalCacheDir();
-        if (getImage != null) {
-            outputFileUri = Uri.fromFile(new File(getImage.getPath(), "EmployeeProfile.png"));
-        }
-
-
-        return outputFileUri;
-    }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //200, -1, null
-        // Intent { dat=content://media/external/images/media/150367 flg=0x1 }
-        Bitmap bitmap;
-        if (resultCode == Activity.RESULT_OK) {
-            // ImageView imageView = (ImageView) findViewById(R.id.imageView);
-            if (getPickImageResultUri(data) != null) {
-                picUri = getPickImageResultUri(data);
-                Log.i("File PATH", "" + picUri);
-                // Toast.makeText(SignUpActivity.this,""+picUri,Toast.LENGTH_LONG).show();
-                try {
-                    myBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), picUri);
-                    myBitmap = getResizedBitmap(myBitmap, 500);
-                    CircleImageView croppedImageView = (CircleImageView) findViewById(R.id.profile_pic);
-                    croppedImageView.setImageBitmap(myBitmap);
-                    String encodedImage = encodeFromString(myBitmap);
-                    Toast.makeText(getApplicationContext(),""+encodedImage,Toast.LENGTH_LONG).show();
-                    //  profile_pic.setImageBitmap(myBitmap);
-                } catch (IOException e) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
 
-                }
-            } else {
-                bitmap = (Bitmap) data.getExtras().get("data");
-                myBitmap = bitmap;
-                CircleImageView croppedImageView = (CircleImageView) findViewById(R.id.profile_pic);
-                if (croppedImageView != null) {
-                    croppedImageView.setImageBitmap(myBitmap);
-                }
-                String encodedImage = encodeFromString(myBitmap);
-                Toast.makeText(getApplicationContext(),""+encodedImage,Toast.LENGTH_LONG).show();
-                //  profile_pic.setImageBitmap(myBitmap);
+        if (resultCode == RESULT_OK)
+        {
+
+            if (requestCode == REQUEST_CAMERA)
+            {
+                File getImage = getExternalCacheDir();
+                File file = new File(getImage.getPath(), "EmployeeProfile.png");
+                saveBitmap(file.getPath());
             }
-
+            else if (requestCode == SELECT_FILE)
+            {
+                Uri selectedImageUri = data.getData();
+                String[] projection =
+                        { MediaStore.MediaColumns.DATA };
+                Cursor cursor = managedQuery(selectedImageUri, projection, null, null, null);
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+                cursor.moveToFirst();
+                String bmpPath  = cursor.getString(column_index);
+                saveBitmap(bmpPath);
+            }
         }
+
+
+    }
+    public void saveBitmap(String filePath)
+    {
+        Bitmap bitmap = null;
+        bitmap = BitmapFactory.decodeFile(filePath);
+
+        bitmap = getResizedBitmap(bitmap, Utils.THUMB_SIZE);
+
+        CircleImageView croppedImageView = (CircleImageView) findViewById(R.id.profile_pic);
+        croppedImageView.setImageBitmap(bitmap);
     }
 
-    public Uri getPickImageResultUri(Intent data) {
-        boolean isCamera = true;
-        if (data != null) {
-            String action = data.getAction();
-            isCamera = action != null && action.equals(MediaStore.ACTION_IMAGE_CAPTURE);
-        }
-        return isCamera ? getCaptureImageOutputUri() : data.getData();
-    }
+
 
     public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
         int width = image.getWidth();
@@ -212,8 +266,8 @@ public class SignUpActivity extends AppCompatActivity {
                 for (String perms : permissionsToRequest) {
                     if (hasPermission(perms)) {
 
-                    } else {
-
+                    } else
+                    {
                         permissionsRejected.add(perms);
                     }
                 }
