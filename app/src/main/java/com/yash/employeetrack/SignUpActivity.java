@@ -15,12 +15,15 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,7 +77,7 @@ public class SignUpActivity extends AppCompatActivity {
                 startService();
             }
         });
-       //startService();
+        //startService();
     }
 
     public void startService() {
@@ -154,6 +157,8 @@ public class SignUpActivity extends AppCompatActivity {
                     myBitmap = getResizedBitmap(myBitmap, 500);
                     CircleImageView croppedImageView = (CircleImageView) findViewById(R.id.profile_pic);
                     croppedImageView.setImageBitmap(myBitmap);
+                    String encodedImage = encodeFromString(myBitmap);
+                    Toast.makeText(getApplicationContext(),""+encodedImage,Toast.LENGTH_LONG).show();
                     //  profile_pic.setImageBitmap(myBitmap);
                 } catch (IOException e) {
 
@@ -165,6 +170,8 @@ public class SignUpActivity extends AppCompatActivity {
                 if (croppedImageView != null) {
                     croppedImageView.setImageBitmap(myBitmap);
                 }
+                String encodedImage = encodeFromString(myBitmap);
+                Toast.makeText(getApplicationContext(),""+encodedImage,Toast.LENGTH_LONG).show();
                 //  profile_pic.setImageBitmap(myBitmap);
             }
 
@@ -268,5 +275,12 @@ public class SignUpActivity extends AppCompatActivity {
             }
         }
         return result;
+    }
+
+    public static String encodeFromString(Bitmap bm){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
+        byte[] b = baos.toByteArray();
+        return Base64.encodeToString(b, Base64.DEFAULT);
     }
 }
