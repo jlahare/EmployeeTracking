@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
@@ -64,6 +65,9 @@ public class SignUpActivity extends AppCompatActivity {
     private ArrayList<String> permissions = new ArrayList<>();
     private final static int ALL_PERMISSIONS_RESULT = 107;
 
+    SharedPreferences sh_Pref;
+    SharedPreferences.Editor toEdit;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +84,7 @@ public class SignUpActivity extends AppCompatActivity {
                 bluetoothIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(bluetoothIntent);
             } else {
-               Toast.makeText(getApplicationContext(),"For proper working of this application bluetooth needs to TURN ON.",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "For proper working of this application bluetooth needs to TURN ON.", Toast.LENGTH_LONG).show();
             }
         }
         setContentView(R.layout.activity_signup);
@@ -126,13 +130,14 @@ public class SignUpActivity extends AppCompatActivity {
                     emailId.setError("Email is required!");
                 } else if (TextUtils.isEmpty(empId.getText())) {
                     empId.setError("Employee Id is required!");
+                } else if (TextUtils.isEmpty(phoneNo.getText())) {
+                    phoneNo.setError("Phone no is required!");
                 } else if (TextUtils.isEmpty(businessUnit.getText())) {
                     businessUnit.setError("Business unit is required!");
                 } else if (TextUtils.isEmpty(designation.getText())) {
                     designation.setError("Designation is required!");
-                } else if (TextUtils.isEmpty(phoneNo.getText())) {
-                    phoneNo.setError("Phone no is required!");
                 } else {
+                    setSharedPrefernces();
                     sendToServer();
                 }
             }
@@ -145,9 +150,39 @@ public class SignUpActivity extends AppCompatActivity {
         return ((EditText) findViewById(rid)).getText().toString();
     }
 
+
+    public void setSharedPrefernces() {
+
+        sh_Pref = getSharedPreferences("Credentials", MODE_PRIVATE);
+        toEdit = sh_Pref.edit();
+        toEdit.putString("businessUnit", getStr(R.id.business_unit));
+        toEdit.putString("contactNo", getStr(R.id.contact_no));
+        toEdit.putString("designation", getStr(R.id.designation));
+        toEdit.putString("deviceId", Utils.getDeviceId(this));
+        toEdit.putString("email", getStr(R.id.email));
+        toEdit.putString("empId", getStr(R.id.emp_id));
+        //  toEdit.putString("empPhoto", getStr(R.id.contact_no));
+        toEdit.putString("firstName", getStr(R.id.first_name));
+        toEdit.putString("gender", getGender());
+        toEdit.putString("lastName", getStr(R.id.last_name));
+        toEdit.commit();
+    }
+
+    public void getSharedPreferences() {
+        sh_Pref = getSharedPreferences("Credentials", MODE_PRIVATE);
+        sh_Pref.getString("businessUnit", "NA");
+        sh_Pref.getString("contactNo", "NA");
+        sh_Pref.getString("designation", "NA");
+        sh_Pref.getString("deviceId", "NA");
+        sh_Pref.getString("email", "NA");
+        sh_Pref.getString("empId", "NA");
+        sh_Pref.getString("firstName", "NA");
+        sh_Pref.getString("gender", "NA");
+        sh_Pref.getString("lastName", "NA");
+    }
+
     public String getGender() {
         boolean isMale = ((RadioButton) findViewById(R.id.maleRadio)).isChecked();
-
         String s = (isMale == true ? "Male" : "Female");
         return s;
 
@@ -177,7 +212,6 @@ public class SignUpActivity extends AppCompatActivity {
         } catch (Throwable throwable) {
 
         }
-
     }
 
     JNetworkHandler.NetworkListener networkListener = new JNetworkHandler.NetworkListener() {
