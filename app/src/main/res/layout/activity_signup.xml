@@ -107,46 +107,66 @@
             android:textColor="@color/gray_color"
             android:textColorHint="@color/gray_color" />
 
-        <Spinner
-            android:id="@+id/spinner1"
-            android:layout_width="wrap_content"
+        <LinearLayout android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="83dp" />
+            android:orientation="horizontal">
 
-        <RadioGroup
-            android:id="@+id/group_gender"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_15"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <RadioButton
-                android:id="@+id/maleRadio"
+            <Spinner
+                android:id="@+id/gender_spinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:background="@android:drawable/editbox_background"
-                android:buttonTint="@color/gray_color"
-                android:checked="true"
-                android:padding="@dimen/drawable_padding_10dp"
-                android:text="@string/male"
-                android:textColor="@color/gray_color" />
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/margin_10"
+                />
 
-            <RadioButton
-                android:id="@+id/femaleRadio"
+            <EditText
+                android:id="@+id/business_unit"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/margin_10"
                 android:background="@android:drawable/editbox_background"
-                android:buttonTint="@color/gray_color"
-                android:padding="@dimen/drawable_padding_10dp"
-                android:text="@string/female"
-                android:textColor="@color/gray_color" />
+                android:drawableLeft="@drawable/ic_business_unit"
+                android:hint="@string/business_unit"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/gray_color"
+                android:textColorHint="@color/gray_color" />
 
-        </RadioGroup>
+        </LinearLayout>
+
+
+        <!--<RadioGroup-->
+        <!--android:id="@+id/group_gender"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="@dimen/margin_15"-->
+        <!--android:orientation="horizontal"-->
+        <!--android:visibility="gone">-->
+
+        <!--<RadioButton-->
+        <!--android:id="@+id/maleRadio"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:background="@android:drawable/editbox_background"-->
+        <!--android:buttonTint="@color/gray_color"-->
+        <!--android:checked="true"-->
+        <!--android:padding="@dimen/drawable_padding_10dp"-->
+        <!--android:text="@string/male"-->
+        <!--android:textColor="@color/gray_color" />-->
+
+        <!--<RadioButton-->
+        <!--android:id="@+id/femaleRadio"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:background="@android:drawable/editbox_background"-->
+        <!--android:buttonTint="@color/gray_color"-->
+        <!--android:padding="@dimen/drawable_padding_10dp"-->
+        <!--android:text="@string/female"-->
+        <!--android:textColor="@color/gray_color" />-->
+
+        <!--</RadioGroup>-->
 
 
         <EditText
@@ -166,21 +186,6 @@
             android:textColor="@color/gray_color"
             android:textColorHint="@color/gray_color" />
 
-        <EditText
-            android:id="@+id/business_unit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/margin_10"
-            android:background="@android:drawable/editbox_background"
-            android:drawableLeft="@drawable/ic_business_unit"
-            android:drawablePadding="@dimen/drawable_padding_10dp"
-            android:hint="@string/business_unit"
-            android:maxLines="1"
-            android:padding="@dimen/drawable_padding_10dp"
-            android:singleLine="true"
-            android:textColor="@color/gray_color"
-            android:textColorHint="@color/gray_color" />
 
         <EditText
             android:id="@+id/designation"

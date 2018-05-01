@@ -30,11 +30,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,6 +81,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     SharedPreferences sh_Pref;
     SharedPreferences.Editor toEdit;
+    String selectedGender;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,6 +96,29 @@ public class SignUpActivity extends AppCompatActivity {
         designation = findViewById(R.id.designation);
         empId = findViewById(R.id.emp_id);
         profile_pic = findViewById(R.id.profile_pic);
+
+        final String[] gender = { "Male","Female",  };
+
+        Spinner spin = (Spinner) findViewById(R.id.gender_spinner);
+        spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+            selectedGender= gender[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        //Creating the ArrayAdapter instance having the country list
+        ArrayAdapter aa = new ArrayAdapter(this,R.layout.spinner_item,R.id.textview,gender);
+        aa.setDropDownViewResource(R.layout.spinner_item);
+        spin.setAdapter(aa);
+
+
         profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -156,7 +183,7 @@ public class SignUpActivity extends AppCompatActivity {
         toEdit.putString("empId", getStr(R.id.emp_id));
         //  toEdit.putString("empPhoto", getStr(R.id.contact_no));
         toEdit.putString("firstName", getStr(R.id.first_name));
-        toEdit.putString("gender", getGender());
+        toEdit.putString("gender", selectedGender);
         toEdit.putString("lastName", getStr(R.id.last_name));
         toEdit.commit();
     }
@@ -174,20 +201,10 @@ public class SignUpActivity extends AppCompatActivity {
         sh_Pref.getString("lastName","NA");
     }
 
-
     public String getStr(int rid) {
         return ((EditText) findViewById(rid)).getText().toString();
     }
 
-
-    public String getGender()
-    {
-        boolean isMale = ((RadioButton)findViewById(R.id.maleRadio)).isChecked();
-
-        String s = (isMale==true ? "Male" : "Female");
-        return s;
-
-    }
     private void sendToServer()
     {
         try {
@@ -203,7 +220,7 @@ public class SignUpActivity extends AppCompatActivity {
             json.put("empId", Integer.parseInt(getStr(R.id.emp_id)));
             json.put("empPhoto", Utils.base64Image);
             json.put("firstName", getStr(R.id.first_name));
-            json.put("gender", getGender());
+            json.put("gender",  selectedGender);
             json.put("lastName", getStr(R.id.last_name));
 
             Log.i("JSON" , json.toString());
@@ -457,8 +474,8 @@ public class SignUpActivity extends AppCompatActivity {
         Context context;
 
         public ByteTask(Context ctx ) {
-           // dialog = new ProgressDialog(ctx);
-           // dialog.setMessage("Loading Image, Please wait..");
+            // dialog = new ProgressDialog(ctx);
+            // dialog.setMessage("Loading Image, Please wait..");
             context = ctx;
         }
 
@@ -466,7 +483,7 @@ public class SignUpActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             try {
-             //   dialog.show();
+                //   dialog.show();
             }catch (Throwable t){}
         }
 
@@ -476,12 +493,12 @@ public class SignUpActivity extends AppCompatActivity {
         {
             try
             {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    Utils.byteBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
-                    byte[] b = baos.toByteArray();
-                    baos.close();
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                Utils.byteBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
+                byte[] b = baos.toByteArray();
+                baos.close();
 
-                    return Base64.encodeToString(b, Base64.DEFAULT);
+                return Base64.encodeToString(b, Base64.DEFAULT);
 
             } catch (IOException e) {
                 e.printStackTrace();
