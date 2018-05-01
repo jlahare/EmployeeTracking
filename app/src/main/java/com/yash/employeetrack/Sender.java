@@ -4,13 +4,14 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.widget.Toast;
 
 /**
  * Created by vipin.jain on 4/27/2018.
  */
 
-public class Sender extends Service {
+public class Sender extends Service
+{
+    private boolean isRunning = false;
     @Override
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
@@ -18,6 +19,9 @@ public class Sender extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+
+        isRunning = true;
 
         /*final Thread thread = new Thread(new Runnable() {
             @Override
@@ -33,6 +37,10 @@ public class Sender extends Service {
         });*/
         return super.onStartCommand(intent, flags, startId);
     }
+
+
+
+
 
     @Nullable
     @Override
