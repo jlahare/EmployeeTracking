@@ -114,6 +114,7 @@
             <Spinner
                 android:id="@+id/gender_spinner"
                 android:layout_width="wrap_content"
+                android:layout_marginLeft="5dp"
                 android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/margin_10"
                 />
