@@ -21,6 +21,7 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
@@ -66,6 +67,8 @@ public class SignUpActivity extends AppCompatActivity {
     ImageView profile_pic;
 
     Button save;
+    boolean isRecommended = true;
+    private EditText firstName, lastName, businessUnit, empId, designation, emailId, phoneNo;
 
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
@@ -77,6 +80,13 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         save = findViewById(R.id.signUp);
+        firstName = findViewById(R.id.first_name);
+        lastName = findViewById(R.id.last_name);
+        emailId = findViewById(R.id.email);
+        phoneNo = findViewById(R.id.contact_no);
+        businessUnit = findViewById(R.id.business_unit);
+        designation = findViewById(R.id.designation);
+        empId = findViewById(R.id.emp_id);
         profile_pic = findViewById(R.id.profile_pic);
         profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -102,7 +112,25 @@ public class SignUpActivity extends AppCompatActivity {
         findViewById(R.id.signUp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sendToServer();
+                if (Utils.base64Image == null) {
+                    Toast.makeText(getApplicationContext(), "Please select profile pic", Toast.LENGTH_LONG).show();
+                } else if (TextUtils.isEmpty(firstName.getText())) {
+                    firstName.setError("First name is required!");
+                } else if (TextUtils.isEmpty(lastName.getText())) {
+                    lastName.setError("Last name is required!");
+                } else if (TextUtils.isEmpty(emailId.getText())) {
+                    emailId.setError("Email is required!");
+                } else if (TextUtils.isEmpty(empId.getText())) {
+                    empId.setError("Employee Id is required!");
+                } else if (TextUtils.isEmpty(businessUnit.getText())) {
+                    businessUnit.setError("Business unit is required!");
+                } else if (TextUtils.isEmpty(designation.getText())) {
+                    designation.setError("Designation is required!");
+                } else if (TextUtils.isEmpty(phoneNo.getText())) {
+                    phoneNo.setError("Phone no is required!");
+                } else {
+                    sendToServer();
+                }
             }
         });
         //startService();
