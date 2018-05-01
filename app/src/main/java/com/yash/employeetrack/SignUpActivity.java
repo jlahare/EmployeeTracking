@@ -1,8 +1,7 @@
 package com.yash.employeetrack;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.ProgressDialog;
+import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,16 +24,11 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.RadioButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yash.employeetrack.http.JNetworkConstants;
@@ -45,8 +39,6 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,11 +55,8 @@ public class SignUpActivity extends AppCompatActivity {
     private static final int REQUEST_CAMERA = 200;
     private static final int SELECT_FILE = 201;
 
-
     ImageView profile_pic;
-
     Button save;
-    boolean isRecommended = true;
     private EditText firstName, lastName, businessUnit, empId, designation, emailId, phoneNo;
 
     private ArrayList<String> permissionsToRequest;
@@ -78,6 +67,22 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Getting the bluetooth adapter object
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        // Checking if bluetooth is supported by device or not
+        if (mBluetoothAdapter == null) {
+            Toast.makeText(getApplicationContext(), "Bluetooth Not Supported", Toast.LENGTH_LONG).show();
+        } else {
+            // if bluetooth is supported but not enabled then enable it
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent bluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                bluetoothIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(bluetoothIntent);
+            } else {
+               Toast.makeText(getApplicationContext(),"For proper working of this application bluetooth needs to TURN ON.",Toast.LENGTH_LONG).show();
+            }
+        }
         setContentView(R.layout.activity_signup);
         save = findViewById(R.id.signUp);
         firstName = findViewById(R.id.first_name);
@@ -90,8 +95,7 @@ public class SignUpActivity extends AppCompatActivity {
         profile_pic = findViewById(R.id.profile_pic);
         profile_pic.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 selectImage();
             }
         });
@@ -137,21 +141,19 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-    public String getStr(int rid)
-    {
-        return ((EditText)findViewById(rid)).getText().toString();
+    public String getStr(int rid) {
+        return ((EditText) findViewById(rid)).getText().toString();
     }
 
-    public String getGender()
-    {
-        boolean isMale = ((RadioButton)findViewById(R.id.maleRadio)).isChecked();
+    public String getGender() {
+        boolean isMale = ((RadioButton) findViewById(R.id.maleRadio)).isChecked();
 
-        String s = (isMale==true ? "Male" : "Female");
+        String s = (isMale == true ? "Male" : "Female");
         return s;
 
     }
-    private void sendToServer()
-    {
+
+    private void sendToServer() {
         try {
             String id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
             String url = JNetworkConstants.BASE_URL + JNetworkConstants.REGISTER_URL;
@@ -168,23 +170,22 @@ public class SignUpActivity extends AppCompatActivity {
             json.put("gender", getGender());
             json.put("lastName", getStr(R.id.last_name));
 
-            Log.i("JSON" , json.toString());
+            Log.i("JSON", json.toString());
 
             JNetworkHandler network = new JNetworkHandler(this, url, json.toString(), networkListener);
             network.execute("");
-        }catch (Throwable throwable)
-        {
+        } catch (Throwable throwable) {
 
         }
 
     }
+
     JNetworkHandler.NetworkListener networkListener = new JNetworkHandler.NetworkListener() {
         @Override
         public void onNetworkResponse(Pair<String, String> response) {
-            Log.i("FIRST" , response.first);
-            Log.i("SECOND" , response.second);
-            if(response.first.equalsIgnoreCase(JNetworkConstants.NETWORK_SUCCESS))
-            {
+            Log.i("FIRST", response.first);
+            Log.i("SECOND", response.second);
+            if (response.first.equalsIgnoreCase(JNetworkConstants.NETWORK_SUCCESS)) {
                 Toast.makeText(getApplicationContext(), "Employee Info updated successfully !!!", Toast.LENGTH_LONG).show();
                 //START SERVICE.
                 //SignUpActivity.this.startService(intent);
@@ -195,18 +196,16 @@ public class SignUpActivity extends AppCompatActivity {
 
                 SignUpActivity.this.finish();
 
-            }else  if(response.first.equalsIgnoreCase(JNetworkConstants.NETWORK_ERROR))
-            {
+            } else if (response.first.equalsIgnoreCase(JNetworkConstants.NETWORK_ERROR)) {
                 Toast.makeText(getApplicationContext(), "Network Error : " + response.second + "\nPlease try again !!!", Toast.LENGTH_LONG).show();
 
             }
         }
     };
 
-    private void selectImage()
-    {
+    private void selectImage() {
         final CharSequence[] items =
-                { "Camera", "Choose from Gallery" };
+                {"Camera", "Choose from Gallery"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(SignUpActivity.this);
         builder.setTitle("Select Picture");
@@ -214,8 +213,7 @@ public class SignUpActivity extends AppCompatActivity {
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                if (items[item].equals("Camera"))
-                {
+                if (items[item].equals("Camera")) {
                     File getImage = getExternalCacheDir();
                     File file = new File(getImage.getPath(), "EmployeeProfile.png");
 
@@ -266,38 +264,32 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_OK)
-        {
+        if (resultCode == RESULT_OK) {
 
-            if (requestCode == REQUEST_CAMERA)
-            {
+            if (requestCode == REQUEST_CAMERA) {
                 File getImage = getExternalCacheDir();
                 File file = new File(getImage.getPath(), "EmployeeProfile.png");
                 saveBitmap(file.getPath());
-            }
-            else if (requestCode == SELECT_FILE)
-            {
+            } else if (requestCode == SELECT_FILE) {
                 Uri selectedImageUri = data.getData();
                 String[] projection =
-                        { MediaStore.MediaColumns.DATA };
+                        {MediaStore.MediaColumns.DATA};
                 Cursor cursor = managedQuery(selectedImageUri, projection, null, null, null);
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
                 cursor.moveToFirst();
-                String bmpPath  = cursor.getString(column_index);
+                String bmpPath = cursor.getString(column_index);
                 saveBitmap(bmpPath);
             }
         }
 
 
     }
-    public void saveBitmap(String filePath)
-    {
+
+    public void saveBitmap(String filePath) {
         Bitmap bitmap = null;
         bitmap = BitmapFactory.decodeFile(filePath);
 
@@ -310,7 +302,6 @@ public class SignUpActivity extends AppCompatActivity {
         ByteTask task = new ByteTask(SignUpActivity.this);
         task.execute("");
     }
-
 
 
     public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
@@ -338,8 +329,7 @@ public class SignUpActivity extends AppCompatActivity {
                 for (String perms : permissionsToRequest) {
                     if (hasPermission(perms)) {
 
-                    } else
-                    {
+                    } else {
                         permissionsRejected.add(perms);
                     }
                 }
@@ -402,9 +392,10 @@ public class SignUpActivity extends AppCompatActivity {
         }
         return result;
     }
+
     private static Bitmap byteBitmap = null;
 
-    public static String encodeFromString(Bitmap bm){
+    public static String encodeFromString(Bitmap bm) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
         byte[] b = baos.toByteArray();
@@ -412,15 +403,14 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-    class ByteTask extends AsyncTask<String,String,String>
-    {
+    class ByteTask extends AsyncTask<String, String, String> {
 
         //ProgressDialog dialog;
         Context context;
 
-        public ByteTask(Context ctx ) {
-           // dialog = new ProgressDialog(ctx);
-           // dialog.setMessage("Loading Image, Please wait..");
+        public ByteTask(Context ctx) {
+            // dialog = new ProgressDialog(ctx);
+            // dialog.setMessage("Loading Image, Please wait..");
             context = ctx;
         }
 
@@ -428,22 +418,21 @@ public class SignUpActivity extends AppCompatActivity {
         protected void onPreExecute() {
             super.onPreExecute();
             try {
-             //   dialog.show();
-            }catch (Throwable t){}
+                //   dialog.show();
+            } catch (Throwable t) {
+            }
         }
 
 
         @Override
-        protected String doInBackground(String... strings)
-        {
-            try
-            {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                    Utils.byteBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
-                    byte[] b = baos.toByteArray();
-                    baos.close();
+        protected String doInBackground(String... strings) {
+            try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                Utils.byteBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos); //bm is the bitmap object
+                byte[] b = baos.toByteArray();
+                baos.close();
 
-                    return Base64.encodeToString(b, Base64.DEFAULT);
+                return Base64.encodeToString(b, Base64.DEFAULT);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -452,21 +441,18 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String s)
-        {
+        protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            try
-            {
-                if(s==null)
-                {
-                    Toast.makeText(context , "Error converting image, try again !!!" ,Toast.LENGTH_LONG).show();
-                }else
-                {
-                    Toast.makeText(context , "Picture captured successfully !!!" ,Toast.LENGTH_LONG).show();
+            try {
+                if (s == null) {
+                    Toast.makeText(context, "Error converting image, try again !!!", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(context, "Picture captured successfully !!!", Toast.LENGTH_LONG).show();
                 }
                 Utils.base64Image = s;
                 //dialog.hide();
-            }catch (Throwable t){}
+            } catch (Throwable t) {
+            }
         }
     }
 
