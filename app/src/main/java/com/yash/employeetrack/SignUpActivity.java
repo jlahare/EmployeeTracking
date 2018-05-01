@@ -195,6 +195,10 @@ public class SignUpActivity extends AppCompatActivity {
 
                 SignUpActivity.this.finish();
 
+            }else  if(response.first.equalsIgnoreCase(JNetworkConstants.NETWORK_ERROR))
+            {
+                Toast.makeText(getApplicationContext(), "Network Error : " + response.second + "\nPlease try again !!!", Toast.LENGTH_LONG).show();
+
             }
         }
     };
