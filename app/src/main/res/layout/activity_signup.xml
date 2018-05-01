@@ -18,8 +18,9 @@
         android:padding="@dimen/padding_5">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -30,47 +31,47 @@
                 app:civ_border_color="#757575"
                 app:civ_border_width="2dp" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_10"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/first_name"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:background="@android:drawable/editbox_background"
-                android:drawableLeft="@drawable/ic_person"
-                android:drawablePadding="@dimen/drawable_padding_10dp"
-                android:hint="@string/name_hint"
-                android:inputType="text"
-                android:maxLines="1"
-                android:padding="@dimen/drawable_padding_10dp"
-                android:singleLine="true"
-                android:textColor="@color/gray_color"
-                android:textColorHint="@color/gray_color"
-                tools:ignore="Suspicious0dp" />
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/margin_5"
+                android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/last_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight=".5"
-                android:background="@android:drawable/editbox_background"
-                android:drawablePadding="@dimen/drawable_padding_10dp"
-                android:hint="@string/last_name"
-                android:inputType="text"
-                android:maxLines="1"
-                android:padding="@dimen/drawable_padding_10dp"
-                android:singleLine="true"
-                android:textColor="@color/gray_color"
-                android:textColorHint="@color/gray_color"
-                tools:ignore="Suspicious0dp" />
+                <EditText
+                    android:id="@+id/first_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:drawable/editbox_background"
+                    android:drawableLeft="@drawable/ic_person"
+                    android:drawablePadding="@dimen/drawable_padding_10dp"
+                    android:hint="First Name"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="@dimen/drawable_padding_10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/gray_color"
+                    android:textColorHint="@color/gray_color"
+                    tools:ignore="Suspicious0dp" />
+
+                <EditText
+                    android:id="@+id/last_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_5"
+                    android:background="@android:drawable/editbox_background"
+                    android:drawableLeft="@drawable/ic_person"
+                    android:drawablePadding="@dimen/drawable_padding_10dp"
+                    android:hint="@string/last_name"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="@dimen/drawable_padding_10dp"
+                    android:singleLine="true"
+                    android:textColor="@color/gray_color"
+                    android:textColorHint="@color/gray_color"
+                    tools:ignore="Suspicious0dp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -206,15 +207,18 @@
 
         <Button
             android:id="@+id/signUp"
-            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
-            android:layout_width="wrap_content"
+
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:layout_marginLeft="@dimen/margin_5"
+            android:layout_marginRight="@dimen/margin_5"
             android:layout_marginTop="@dimen/margin_10"
             android:padding="@dimen/padding_5"
             android:text="@string/save"
             android:textAllCaps="false"
-            android:textColor="@color/gray_color"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
     </LinearLayout>
