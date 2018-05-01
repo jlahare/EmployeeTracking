@@ -155,11 +155,18 @@ public class SignUpActivity extends AppCompatActivity {
         public void onNetworkResponse(Pair<String, String> response) {
             Log.i("FIRST" , response.first);
             Log.i("SECOND" , response.second);
-            if(response.second.equalsIgnoreCase(JNetworkConstants.NETWORK_SUCCESS))
+            if(response.first.equalsIgnoreCase(JNetworkConstants.NETWORK_SUCCESS))
             {
+                Toast.makeText(getApplicationContext(), "Employee Info updated successfully !!!", Toast.LENGTH_LONG).show();
                 //START SERVICE.
                 //SignUpActivity.this.startService(intent);
-                SignUpActivity.this.startService(new Intent(SignUpActivity.this, Sender.class));
+                SignUpActivity.this.startService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
+
+                Intent i = new Intent(SignUpActivity.this, ThanksActivity.class);
+                SignUpActivity.this.startActivity(i);
+
+                SignUpActivity.this.finish();
+
             }
         }
     };

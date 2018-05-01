@@ -18,7 +18,7 @@ public class Sender extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Toast.makeText(getApplicationContext(), "Service Started", Toast.LENGTH_LONG).show();
+
         /*final Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {

@@ -9,6 +9,8 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Pair;
 
+import com.yash.employeetrack.R;
+
 import java.util.HashMap;
 
 /**
@@ -44,6 +46,12 @@ public class JNetworkHandler extends AsyncTask<String, String, Pair<String, Stri
 
     private NetworkListener listener;
     private ProgressDialog progressBar;
+    private boolean playSilent = false;
+
+    public void setSilentMode(boolean silent)
+    {
+        this.playSilent = silent;
+    }
 
 
 
@@ -101,16 +109,17 @@ public class JNetworkHandler extends AsyncTask<String, String, Pair<String, Stri
             progressBar.setContentView(R.layout.network_progress);
             progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));*/
 
-            if (progressBar == null)
-            {
-                progressBar = new ProgressDialog(context);
-                progressBar.show();
-                progressBar.setCancelable(false);
-                //progressBar.setContentView(R.layout.network_progress);
-                progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+            if(playSilent == false) {
+                if (progressBar == null) {
+                    progressBar = new ProgressDialog(context);
+                    progressBar.show();
+                    progressBar.setCancelable(false);
+                    progressBar.setContentView(R.layout.network_progress);
+                    progressBar.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-            } else
-                progressBar.show();
+                } else
+                    progressBar.show();
+            }
 
         } catch (Throwable t)
         {
