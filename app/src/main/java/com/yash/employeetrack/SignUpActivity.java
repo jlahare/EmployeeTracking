@@ -26,19 +26,12 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
-
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-
 import android.widget.Spinner;
-import android.widget.TextView;
-
 import android.widget.Toast;
 
 import com.yash.employeetrack.http.JNetworkConstants;
@@ -54,6 +47,8 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
 
 /**
@@ -82,10 +77,10 @@ public class SignUpActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Getting the bluetooth adapter object
-        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        final BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         // Checking if bluetooth is supported by device or not
-        if (mBluetoothAdapter == null) {
+       /* if (mBluetoothAdapter == null) {
             Toast.makeText(getApplicationContext(), "Bluetooth Not Supported", Toast.LENGTH_LONG).show();
         } else {
             // if bluetooth is supported but not enabled then enable it
@@ -96,7 +91,7 @@ public class SignUpActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(getApplicationContext(), "For proper working of this application bluetooth needs to TURN ON.", Toast.LENGTH_LONG).show();
             }
-        }
+        }*/
         setContentView(R.layout.activity_signup);
         save = findViewById(R.id.signUp);
         firstName = findViewById(R.id.first_name);
@@ -108,14 +103,14 @@ public class SignUpActivity extends AppCompatActivity {
         empId = findViewById(R.id.emp_id);
         profile_pic = findViewById(R.id.profile_pic);
 
-        final String[] gender = { "Male","Female",  };
+        final String[] gender = {"Male", "Female",};
 
         Spinner spin = (Spinner) findViewById(R.id.gender_spinner);
         spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-            selectedGender= gender[position];
+                selectedGender = gender[position];
             }
 
             @Override
@@ -124,7 +119,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        ArrayAdapter aa = new ArrayAdapter(this,R.layout.spinner_item,R.id.textview,gender);
+        ArrayAdapter aa = new ArrayAdapter(this, R.layout.spinner_item, R.id.textview, gender);
         aa.setDropDownViewResource(R.layout.spinner_item);
         spin.setAdapter(aa);
 
@@ -136,6 +131,8 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
         permissions.add(CAMERA);
+        permissions.add(ACCESS_COARSE_LOCATION);
+        permissions.add(ACCESS_FINE_LOCATION);
         permissionsToRequest = findUnAskedPermissions(permissions);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -152,6 +149,18 @@ public class SignUpActivity extends AppCompatActivity {
         findViewById(R.id.signUp).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (mBluetoothAdapter == null) {
+                    Toast.makeText(getApplicationContext(), "Bluetooth Not Supported", Toast.LENGTH_LONG).show();
+                } else {
+                    // if bluetooth is supported but not enabled then enable it
+                    if (!mBluetoothAdapter.isEnabled()) {
+                        Intent bluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                        bluetoothIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(bluetoothIntent);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "For proper working of this application bluetooth needs to TURN ON.", Toast.LENGTH_LONG).show();
+                    }
+                }
                 if (Utils.base64Image == null) {
                     Toast.makeText(getApplicationContext(), "Please select profile pic", Toast.LENGTH_LONG).show();
                 } else if (TextUtils.isEmpty(firstName.getText())) {
@@ -176,28 +185,22 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.startBtn).setOnClickListener(new View.OnClickListener()
-        {
+        findViewById(R.id.startBtn).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 SignUpActivity.this.startService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
             }
         });
 
-        findViewById(R.id.stopBtn).setOnClickListener(new View.OnClickListener()
-        {
+        findViewById(R.id.stopBtn).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 SignUpActivity.this.stopService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
             }
         });
 
         //startService();
     }
-
-
 
 
     public void setSharedPrefernces() {
@@ -223,7 +226,6 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-
     public void getSharedPreferences() {
         sh_Pref = getSharedPreferences("Credentials", MODE_PRIVATE);
         sh_Pref.getString("businessUnit", "NA");
@@ -236,7 +238,6 @@ public class SignUpActivity extends AppCompatActivity {
         sh_Pref.getString("gender", "NA");
         sh_Pref.getString("lastName", "NA");
     }
-
 
 
     private void sendToServer() {
@@ -254,7 +255,7 @@ public class SignUpActivity extends AppCompatActivity {
             json.put("empId", Integer.parseInt(getStr(R.id.emp_id)));
             json.put("empPhoto", Utils.base64Image);
             json.put("firstName", getStr(R.id.first_name));
-            json.put("gender",  selectedGender);
+            json.put("gender", selectedGender);
             json.put("lastName", getStr(R.id.last_name));
 
             Log.i("JSON", json.toString());
@@ -507,7 +508,6 @@ public class SignUpActivity extends AppCompatActivity {
             super.onPreExecute();
             try {
                 //   dialog.show();
-
 
 
             } catch (Throwable t) {

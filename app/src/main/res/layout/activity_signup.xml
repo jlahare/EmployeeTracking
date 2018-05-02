@@ -108,17 +108,21 @@
             android:textColor="@color/gray_color"
             android:textColorHint="@color/gray_color" />
 
-        <LinearLayout android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Spinner
                 android:id="@+id/gender_spinner"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:layout_marginLeft="5dp"
+                android:layout_marginTop="@dimen/margin_10"
                 android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:background="@android:color/transparent"
+                android:background="@android:drawable/editbox_background"
+                android:spinnerMode="dialog"
 
                 />
 
@@ -126,14 +130,14 @@
                 android:id="@+id/business_unit"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
                 android:layout_marginTop="@dimen/margin_10"
+                android:layout_weight="1"
                 android:background="@android:drawable/editbox_background"
                 android:drawableLeft="@drawable/ic_business_unit"
                 android:hint="@string/business_unit"
-                android:layout_weight="1"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:layout_marginBottom="5dp"
                 android:textColor="@color/gray_color"
                 android:textColorHint="@color/gray_color" />
 
@@ -211,21 +215,22 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/signUp"
 
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="@dimen/margin_5"
-            android:layout_marginRight="@dimen/margin_5"
-            android:layout_marginTop="@dimen/margin_10"
-            android:padding="@dimen/padding_5"
-            android:text="@string/save"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            <Button
+                android:id="@+id/signUp"
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/margin_5"
+                android:layout_marginRight="@dimen/margin_5"
+                android:layout_marginTop="@dimen/margin_10"
+                android:padding="@dimen/padding_5"
+                android:text="@string/save"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/startBtn"
@@ -235,11 +240,11 @@
                 android:text="Start" />
 
             <Button
-            android:id="@+id/stopBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+                android:id="@+id/stopBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
 
-            android:text="Stop" />
+                android:text="Stop" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
