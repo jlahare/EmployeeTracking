@@ -124,10 +124,9 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        //Creating the ArrayAdapter instance having the country list
-        ArrayAdapter aa = new ArrayAdapter(this,R.layout.spinner_item,R.id.textview,gender);
+        /*ArrayAdapter aa = new ArrayAdapter(this,R.layout.spinner_item,R.id.textview,gender);
         aa.setDropDownViewResource(R.layout.spinner_item);
-        spin.setAdapter(aa);
+        spin.setAdapter(aa);*/
 
 
         profile_pic.setOnClickListener(new View.OnClickListener() {
@@ -172,9 +171,29 @@ public class SignUpActivity extends AppCompatActivity {
                 } else {
                     setSharedPrefernces();
                     sendToServer();
+
                 }
             }
         });
+
+        findViewById(R.id.startBtn).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                SignUpActivity.this.startService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
+            }
+        });
+
+        findViewById(R.id.stopBtn).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View view)
+            {
+                SignUpActivity.this.stopService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
+            }
+        });
+
         //startService();
     }
 

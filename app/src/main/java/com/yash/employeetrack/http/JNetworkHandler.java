@@ -237,4 +237,6 @@ public class JNetworkHandler extends AsyncTask<String, String, Pair<String, Stri
 
     }
 
+
+
 }

@@ -2,10 +2,28 @@ package com.yash.employeetrack;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
+import android.os.RemoteException;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.MonitorNotifier;
+import org.altbeacon.beacon.RangeNotifier;
+import org.altbeacon.beacon.Region;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -13,11 +31,13 @@ import java.util.TimerTask;
  * Created by vipin.jain on 4/27/2018.
  */;
 
-public class Sender extends Service
+public class Sender extends Service implements BeaconConsumer
 {
     private boolean isRunning = false;
     private Timer executor = null;
     private final int TIMER_DELAY = 1000;
+    private final String TAG = "Beacon";
+
 
     @Override
     public void onStart(Intent intent, int startId) {
@@ -28,8 +48,10 @@ public class Sender extends Service
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         isRunning = true;
-        initTask();
-        return super.onStartCommand(intent, flags, startId);
+        startBeconScanning();
+       // initTask();
+       // return super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
     }
     private void initTask()
     {
@@ -79,6 +101,7 @@ public class Sender extends Service
         Log.e("Service" , "Stopping service");
         isRunning = false;
         cancelTimer();
+        beaconManager.unbind(this);
     }
 
     @Nullable
@@ -86,4 +109,146 @@ public class Sender extends Service
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+    //=============== BLE RELATED CODE =====================
+
+    private BeaconManager beaconManager;
+    private void startBeconScanning()
+    {
+
+        beaconManager = BeaconManager.getInstanceForApplication(this.getApplicationContext());
+        beaconManager.getBeaconParsers().add(new BeaconParser()
+                //.setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
+                .setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
+
+        beaconManager.setForegroundBetweenScanPeriod(100);
+        beaconManager.setBackgroundScanPeriod(100);
+        beaconManager.setBackgroundBetweenScanPeriod(100);
+        beaconManager.setBackgroundMode(false);
+        beaconManager.setRegionExitPeriod(100);
+        beaconManager.setAndroidLScanningDisabled(false);
+
+        try {
+            beaconManager.updateScanPeriods();
+        } catch (Exception e) {
+            Log.e(TAG , "Error bManager : " + e.toString());
+        }
+
+
+
+        beaconManager.bind(this);
+
+        Toast.makeText(getApplicationContext() , "Scanning Started" , Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onBeaconServiceConnect() {
+        Log.e(TAG , "Inside onBeaconServiceConnect()");
+        Region region = new Region("MyGroup" , null , null,null);
+
+        beaconManager.addMonitorNotifier(new MonitorNotifier() {
+            @Override
+            public void didEnterRegion(Region region) {
+                Log.e(TAG , "Inside didEnterRegion()");
+                try {
+                    beaconManager.startRangingBeaconsInRegion(region);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                    Log.e(TAG , "error 1 didEnterRegion()" + e.toString());
+                    Toast.makeText(getApplicationContext() , "Error Start Region : "  + e.toString()  , Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void didExitRegion(Region region) {
+                try {
+                    //Toast.makeText(getApplicationContext() , "Gone : " +region.getUniqueId() , Toast.LENGTH_SHORT).show();
+                    Log.e(TAG , "Inside didExitRegion()");
+                    beaconManager.stopRangingBeaconsInRegion(region);
+                } catch (RemoteException e) {
+                    Log.e(TAG , "Error Inside didExitRegion()" + e.toString());
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext() , "Error Stop Region : "  + e.toString()  , Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void didDetermineStateForRegion(int i, Region region) {
+
+                Log.e(TAG , "State is : " + i + region.getUniqueId()) ;
+            }
+        });
+
+        beaconManager.addRangeNotifier(new RangeNotifier() {
+            @Override
+            public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region)
+            {
+                Log.e(TAG , "Inside didRangeBeaconsInRegion()");
+                for (Beacon b : beacons)
+                {
+
+
+                    //BeaconInfo bi = new BeaconInfo(b.getBluetoothName() , ""+b.getId1() , ""+b.getRssi()  , ""+b.getBluetoothAddress() , ""+b.getDistance() , ""+b.getTxPower() , ""+b.getBeaconTypeCode());
+                    String name = b.getBluetoothName();
+                    String uuid = ""+b.getId1();
+                    String rssi = ""+b.getRssi();
+                    String mac =  ""+b.getBluetoothAddress();
+                    String distance =  ""+ Beacon.getDistanceCalculator().calculateDistance(b.getTxPower()  , b.getRssi());
+                    String txPower =  ""+b.getTxPower();
+                    String typeCode = ""+b.getBeaconTypeCode();
+
+                    BeaconInfo bi = new BeaconInfo(name , uuid , rssi  , mac , distance , txPower , typeCode);
+
+                    beaconList.put(bi.getName() , bi);
+                }
+
+                 ArrayList<BeaconInfo> list =new ArrayList<>();
+
+
+                for (HashMap.Entry<String, BeaconInfo> entry : beaconList.entrySet()) {
+                    System.out.println("Key = " + entry.getKey() +
+                            ", Value = " + entry.getValue());
+                    list.add(entry.getValue());
+                }
+
+                /*Message msg = handler.obtainMessage();
+                msg.obj = list;
+                handler.sendMessage(msg);*/
+
+            }
+        });
+
+
+        try {
+            beaconManager.startMonitoringBeaconsInRegion(region);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    HashMap<String , BeaconInfo> beaconList = new HashMap<>();
+
+   /* Handler handler = new Handler()
+    {
+        @Override
+        public void handleMessage(Message msg)
+        {
+
+            ArrayList<BeaconInfo> list = (ArrayList<BeaconInfo>) msg.obj;
+            for(int i=0; i< list.size() ; i++)
+            {
+                BeaconInfo bi = list.get(i);
+                LinearLayout view = (LinearLayout) layoutInflater.inflate(R.layout.beacon_row ,null, false);
+                ((TextView)view.findViewById(R.id.uuidTxt)).setText(bi.getUuid());
+                ((TextView)view.findViewById(R.id.nameTxt)).setText(bi.getName());
+                ((TextView)view.findViewById(R.id.signalTxt)).setText(bi.getSignal());
+                ((TextView)view.findViewById(R.id.macTxt)).setText(bi.getMac());
+                ((TextView)view.findViewById(R.id.distanceTxt)).setText(bi.getDistance());
+                ((TextView)view.findViewById(R.id.powerTxt)).setText(bi.getPower());
+                ((TextView)view.findViewById(R.id.typeTxt)).setText(bi.getBeaconType());
+                container.addView(view);
+            }
+        }
+    };*/
+
 }
