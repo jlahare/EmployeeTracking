@@ -124,9 +124,9 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-        /*ArrayAdapter aa = new ArrayAdapter(this,R.layout.spinner_item,R.id.textview,gender);
+        ArrayAdapter aa = new ArrayAdapter(this,R.layout.spinner_item,R.id.textview,gender);
         aa.setDropDownViewResource(R.layout.spinner_item);
-        spin.setAdapter(aa);*/
+        spin.setAdapter(aa);
 
 
         profile_pic.setOnClickListener(new View.OnClickListener() {

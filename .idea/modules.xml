@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/EmployeeTrack.iml" filepath="$PROJECT_DIR$/EmployeeTrack.iml" />
       <module fileurl="file://E:\Beacon_technology\beacon\EmployeeTrack.iml" filepath="E:\Beacon_technology\beacon\EmployeeTrack.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/beacon.iml" filepath="$PROJECT_DIR$/beacon.iml" />
+      <module fileurl="file://D:\BeaconRnD\EmployeeTrack\beacon.iml" filepath="D:\BeaconRnD\EmployeeTrack\beacon.iml" />
     </modules>
   </component>
 </project>

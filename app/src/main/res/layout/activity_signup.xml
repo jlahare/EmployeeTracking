@@ -114,20 +114,23 @@
 
             <Spinner
                 android:id="@+id/gender_spinner"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_marginLeft="5dp"
+                android:layout_weight="1"
                 android:layout_height="match_parent"
-                android:layout_marginTop="@dimen/margin_10"
+                android:background="@android:color/transparent"
+
                 />
 
             <EditText
                 android:id="@+id/business_unit"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/margin_10"
                 android:background="@android:drawable/editbox_background"
                 android:drawableLeft="@drawable/ic_business_unit"
                 android:hint="@string/business_unit"
+                android:layout_weight="1"
                 android:maxLines="1"
                 android:singleLine="true"
                 android:layout_marginBottom="5dp"
