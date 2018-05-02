@@ -6,8 +6,8 @@ package com.yash.employeetrack.http;
 
 public class JNetworkConstants
 {
-    public static final String BASE_URL = "http://ec2-54-191-28-148.us-west-2.compute.amazonaws.com:9000";
-
+    //public static final String BASE_URL = "http://ec2-54-191-28-148.us-west-2.compute.amazonaws.com:9000";
+    public static final String BASE_URL = "http://ec2-54-186-164-14.us-west-2.compute.amazonaws.com:9000";
 
     public static String REGISTER_URL =    "/register";
     public static String SEND_SIGNAL_URL =    "/sendSignal";
