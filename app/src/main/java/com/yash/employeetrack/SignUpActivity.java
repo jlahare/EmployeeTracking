@@ -50,6 +50,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 
 /**
  * Created by vipin.jain on 4/18/2018.
@@ -133,6 +134,7 @@ public class SignUpActivity extends AppCompatActivity {
         permissions.add(CAMERA);
         permissions.add(ACCESS_COARSE_LOCATION);
         permissions.add(ACCESS_FINE_LOCATION);
+        permissions.add(READ_EXTERNAL_STORAGE);
         permissionsToRequest = findUnAskedPermissions(permissions);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -157,9 +159,10 @@ public class SignUpActivity extends AppCompatActivity {
                         Intent bluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         bluetoothIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(bluetoothIntent);
-                    } else {
-                        Toast.makeText(getApplicationContext(), "For proper working of this application bluetooth needs to TURN ON.", Toast.LENGTH_LONG).show();
                     }
+                    /*else {
+                        Toast.makeText(getApplicationContext(), "For proper working of this application bluetooth needs to TURN ON.", Toast.LENGTH_LONG).show();
+                    }*/
                 }
                 if (Utils.base64Image == null) {
                     Toast.makeText(getApplicationContext(), "Please select profile pic", Toast.LENGTH_LONG).show();
@@ -346,9 +349,6 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-    public void startService() {
-        startService(new Intent(getBaseContext(), Sender.class));
-    }
 
 
     @Override
@@ -377,8 +377,27 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     public void saveBitmap(String filePath) {
+
+
+        BitmapFactory.Options options;
         Bitmap bitmap = null;
-        bitmap = BitmapFactory.decodeFile(filePath);
+
+        try {
+
+
+            String imageInSD = filePath;
+            bitmap = BitmapFactory.decodeFile(imageInSD);
+
+        } catch (Throwable t) {
+            try {
+                options = new BitmapFactory.Options();
+                options.inSampleSize = 2;
+                bitmap = BitmapFactory.decodeFile(filePath, options);
+
+            } catch(Throwable e) {
+               Log.e("Error" , "Bitmao Error : " + e.toString());
+            }
+        }
 
         bitmap = getResizedBitmap(bitmap, Utils.THUMB_SIZE);
 

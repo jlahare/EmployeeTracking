@@ -1,5 +1,6 @@
 package com.yash.employeetrack;
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
@@ -32,11 +33,11 @@ public class Subscriber implements MqttCallback {
         //String[] auth = this.getAuth(uri);
         String username = "xppieoxr";
         String password = "72xlRZiP6Z-i";
-        String clientId = "test";
+        String clientId = "iBeacon";
        /* if (!uri.getPath().isEmpty()) {
             this.topic = uri.getPath().substring(1);
         }*/
-        this.topic="test";
+        this.topic="iBeacon";
 
         MqttConnectOptions conOpt = new MqttConnectOptions();
         conOpt.setCleanSession(true);
@@ -67,7 +68,8 @@ public class Subscriber implements MqttCallback {
      */
     public void connectionLost(Throwable cause) {
         System.out.println("Connection lost because: " + cause);
-        System.exit(1);
+        Log.e("MQTT" , "Connection lost : " + cause);
+       //System.exit(1);
     }
 
     /**
@@ -83,7 +85,6 @@ public class Subscriber implements MqttCallback {
     {
         System.out.println(String.format("[%s] %s", topic, new String(message.getPayload())));
 
-        Toast.makeText(context.getApplicationContext(),""+ new String(message.getPayload()), Toast.LENGTH_LONG).show();
     }
 
     /*public static void main(String[] args) throws MqttException, URISyntaxException {

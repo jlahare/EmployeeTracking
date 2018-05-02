@@ -1,7 +1,9 @@
 package com.yash.employeetrack;
 
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -20,24 +22,27 @@ import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.MonitorNotifier;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
 /**
  * Created by vipin.jain on 4/27/2018.
- */;
+ */;import javax.security.auth.login.LoginException;
 
-public class Sender extends Service implements BeaconConsumer
-{
+public class Sender extends Service implements BeaconConsumer {
     private boolean isRunning = false;
     private Timer executor = null;
-    private final int TIMER_DELAY = 1000;
+    private final int TIMER_DELAY = 8000;
     private final String TAG = "Beacon";
-
+    private Subscriber mqttManager;
 
     @Override
     public void onStart(Intent intent, int startId) {
@@ -45,53 +50,126 @@ public class Sender extends Service implements BeaconConsumer
     }
 
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId)
-    {
+    public int onStartCommand(Intent intent, int flags, int startId) {
         isRunning = true;
+        mqttHandler.sendMessage(mqttHandler.obtainMessage());
         startBeconScanning();
-       // initTask();
-       // return super.onStartCommand(intent, flags, startId);
+        initTask();
+
         return START_STICKY;
     }
-    private void initTask()
+    Handler mqttHandler = new Handler()
     {
+        @Override
+        public void handleMessage(Message msg) {
+            startMQTT();
+        }
+    };
 
-        if(executor == null)
+    private void startMQTT() {
+        try {
+            mqttManager = new Subscriber(this);
+        } catch (Throwable throwable) {
+            Log.e(TAG, "ERROR MQTT :" + throwable.toString());
+        }
+
+    }
+
+    private void initTask() {
+
+        if (executor == null)
             executor = new Timer();
-        else
-        {
-           cancelTimer();
+        else {
+            cancelTimer();
         }
         executor.schedule(new TimerTask() {
             @Override
             public void run() {
-                if(isRunning) {
+                if (isRunning) {
                     sendDataToServer();
                 }
             }
-        } , TIMER_DELAY);
+        }, TIMER_DELAY);
     }
-    private void cancelTimer()
-    {
+
+    private void cancelTimer() {
         try {
             executor.cancel();
         } catch (Throwable t) {
         }
         try {
             executor.purge();
-        }catch (Throwable t){
+        } catch (Throwable t) {
         }
         executor = null;
         executor = new Timer();
     }
 
 
+    private void sendDataToServer(){
+        Log.e("TAG", "TICK");
 
-    private void sendDataToServer()
-    {
-        Log.e("TAG" , "TICK");
+        if(mqttManager!=null)
+        {
+            Log.e("TAG", "STEP  -1 size = " + beaconList.size());
+            boolean isNotify = false;
+            for (HashMap.Entry<String, BeaconInfo> entry : beaconList.entrySet())
+            {
+                if(isNotify==false)
+                {
+                    BeaconNotifier.show(getApplicationContext());
+                    isNotify = true;
+                }
+                Log.e("TAG", "STEP  -1.X");
+
+                try {
+
+               /* System.out.println("Key = " + entry.getKey() +
+                        ", Value = " + entry.getValue());*/
+                    BeaconInfo beaconInfo = entry.getValue();
+
+                    JSONObject json = new JSONObject();
+                    json.put("deviceId", getDeviceId());
+
+                    JSONObject jsonChild = new JSONObject();
+                    jsonChild.put("name", beaconInfo.getName());
+                    jsonChild.put("macId", beaconInfo.getMac());
+                    jsonChild.put("rssi", beaconInfo.getSignal());
+                    jsonChild.put("uuid", beaconInfo.getUuid());
+                    jsonChild.put("timeStamp", beaconInfo.getTimeStamp());
+
+
+                    json.put("beacon", jsonChild);
+
+                    Log.e(TAG, "Sending : " + json.toString());
+
+                    mqttManager.sendMessage(json.toString());
+
+                }catch (Throwable throwable)
+                {
+                    Log.e(TAG ,"Send Error 1 : " + throwable.toString());
+                }
+            }
+
+            try {
+                mqttManager.sendMessage("//*****************************************//");
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
+        }else
+        {
+            Log.e(TAG ,"MQTT is Null ");
+        }
+
         initTask();
     }
+
+
+    public String getDeviceId() {
+        SharedPreferences sh_Pref = getSharedPreferences("Credentials", MODE_PRIVATE);
+        return  sh_Pref.getString("deviceId", "1");
+    }
+
 
 
     @Override
@@ -155,7 +233,6 @@ public class Sender extends Service implements BeaconConsumer
                 } catch (RemoteException e) {
                     e.printStackTrace();
                     Log.e(TAG , "error 1 didEnterRegion()" + e.toString());
-                    Toast.makeText(getApplicationContext() , "Error Start Region : "  + e.toString()  , Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -168,7 +245,6 @@ public class Sender extends Service implements BeaconConsumer
                 } catch (RemoteException e) {
                     Log.e(TAG , "Error Inside didExitRegion()" + e.toString());
                     e.printStackTrace();
-                    Toast.makeText(getApplicationContext() , "Error Stop Region : "  + e.toString()  , Toast.LENGTH_LONG).show();
                 }
             }
 
@@ -196,20 +272,23 @@ public class Sender extends Service implements BeaconConsumer
                     String distance =  ""+ Beacon.getDistanceCalculator().calculateDistance(b.getTxPower()  , b.getRssi());
                     String txPower =  ""+b.getTxPower();
                     String typeCode = ""+b.getBeaconTypeCode();
+                    String timeStamp = ""+(new Date()).getTime();
 
-                    BeaconInfo bi = new BeaconInfo(name , uuid , rssi  , mac , distance , txPower , typeCode);
+                    BeaconInfo bi = new BeaconInfo(name , uuid , rssi  , mac , distance , txPower , typeCode, timeStamp);
 
-                    beaconList.put(bi.getName() , bi);
+                    synchronized (beaconList) {
+                        beaconList.put(bi.getMac(), bi);
+                    }
                 }
 
-                 ArrayList<BeaconInfo> list =new ArrayList<>();
+                /* ArrayList<BeaconInfo> list =new ArrayList<>();
 
 
                 for (HashMap.Entry<String, BeaconInfo> entry : beaconList.entrySet()) {
                     System.out.println("Key = " + entry.getKey() +
                             ", Value = " + entry.getValue());
                     list.add(entry.getValue());
-                }
+                }*/
 
                 /*Message msg = handler.obtainMessage();
                 msg.obj = list;

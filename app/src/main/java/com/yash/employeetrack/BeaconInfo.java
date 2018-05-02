@@ -13,9 +13,10 @@ public class BeaconInfo
     private String distance;
     private String power;
     private String beaconType;
+    private String timeStamp;
 
 
-    public BeaconInfo(String name, String uuid, String signal, String mac , String distance ,String power, String beconType) {
+    public BeaconInfo(String name, String uuid, String signal, String mac , String distance ,String power, String beconType, String timeStamp) {
         this.name = name;
         this.uuid = uuid;
         this.signal = signal;
@@ -23,6 +24,15 @@ public class BeaconInfo
         this.distance = distance;
         this.power = power;
         this.beaconType = beconType;
+        this.timeStamp = timeStamp;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public String getBeaconType() {
