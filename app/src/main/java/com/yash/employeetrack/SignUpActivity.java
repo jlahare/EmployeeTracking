@@ -43,6 +43,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -190,21 +191,38 @@ public class SignUpActivity extends AppCompatActivity {
 
         findViewById(R.id.startBtn).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                SignUpActivity.this.startService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
+            public void onClick(View view)
+            {
+                //SignUpActivity.this.startService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
+                aws = new AWSSubscriber(getApplicationContext());
+                aws.connectToAws();
+
             }
         });
 
         findViewById(R.id.stopBtn).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                SignUpActivity.this.stopService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
+            public void onClick(View view)
+            {
+               // SignUpActivity.this.stopService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
+                aws.disconnect();
+            }
+        });
+
+        findViewById(R.id.testBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                //SignUpActivity.this.startService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
+
+                aws.sendMessage("bletracking" , "Test msg : " + (new Date()).toString());
+
             }
         });
 
         //startService();
     }
-
+    AWSSubscriber aws;
 
     public void setSharedPrefernces() {
 

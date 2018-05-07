@@ -33,4 +33,5 @@ dependencies {
     compile 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0'
     compile 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
     compile 'org.altbeacon:android-beacon-library:2+'
+    compile 'com.amazonaws:aws-android-sdk-iot:2.6.+'
 }

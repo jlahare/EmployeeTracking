@@ -42,7 +42,8 @@ public class Sender extends Service implements BeaconConsumer {
     private Timer executor = null;
     private final int TIMER_DELAY = 8000;
     private final String TAG = "Beacon";
-    private Subscriber mqttManager;
+    private AWSSubscriber mqttManager;
+    private String topic = "bletracking";
 
     @Override
     public void onStart(Intent intent, int startId) {
@@ -68,7 +69,7 @@ public class Sender extends Service implements BeaconConsumer {
 
     private void startMQTT() {
         try {
-            mqttManager = new Subscriber(this);
+            mqttManager = new AWSSubscriber(this);
         } catch (Throwable throwable) {
             Log.e(TAG, "ERROR MQTT :" + throwable.toString());
         }
@@ -138,27 +139,30 @@ public class Sender extends Service implements BeaconConsumer {
                     jsonChild.put("uuid", beaconInfo.getUuid());
                     jsonChild.put("timeStamp", beaconInfo.getTimeStamp());
 
-
                     json.put("beacon", jsonChild);
 
                     Log.e(TAG, "Sending : " + json.toString());
 
-                    mqttManager.sendMessage(json.toString());
+                    //mqttManager.sendMessage(json.toString());
+                    mqttManager.sendMessage(topic , json.toString());
 
                 }catch (Throwable throwable)
                 {
                     Log.e(TAG ,"Send Error 1 : " + throwable.toString());
+                    //startMQTT();
                 }
             }
 
-            try {
-                mqttManager.sendMessage("//*****************************************//");
-            } catch (MqttException e) {
+            try
+            {
+                mqttManager.sendMessage(topic , "//*****************************************//");
+            } catch (Throwable e) {
                 e.printStackTrace();
             }
         }else
         {
-            Log.e(TAG ,"MQTT is Null ");
+            Log.e(TAG ,"MQTT is Null , Restarting.");
+            startMQTT();
         }
 
         initTask();
@@ -178,6 +182,7 @@ public class Sender extends Service implements BeaconConsumer {
         super.onDestroy();
         Log.e("Service" , "Stopping service");
         isRunning = false;
+        mqttManager.disconnectManually();
         cancelTimer();
         beaconManager.unbind(this);
     }

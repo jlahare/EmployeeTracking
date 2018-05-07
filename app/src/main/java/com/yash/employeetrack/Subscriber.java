@@ -28,6 +28,7 @@ public class Subscriber implements MqttCallback {
 
     public Subscriber(Context context) throws MqttException
     {
+
         this.context = context;
         String host = String.format("tcp://%s:%d", "m14.cloudmqtt.com",19344);
         //String[] auth = this.getAuth(uri);
