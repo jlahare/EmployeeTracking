@@ -160,6 +160,7 @@ public class SignUpActivity extends AppCompatActivity {
                         Intent bluetoothIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                         bluetoothIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(bluetoothIntent);
+                        return;
                     }
                     /*else {
                         Toast.makeText(getApplicationContext(), "For proper working of this application bluetooth needs to TURN ON.", Toast.LENGTH_LONG).show();
@@ -191,8 +192,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         findViewById(R.id.startBtn).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 //SignUpActivity.this.startService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
                 aws = new AWSSubscriber(getApplicationContext());
                 aws.connectToAws();
@@ -202,26 +202,25 @@ public class SignUpActivity extends AppCompatActivity {
 
         findViewById(R.id.stopBtn).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
-               // SignUpActivity.this.stopService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
+            public void onClick(View view) {
+                // SignUpActivity.this.stopService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
                 aws.disconnect();
             }
         });
 
         findViewById(R.id.testBtn).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view)
-            {
+            public void onClick(View view) {
                 //SignUpActivity.this.startService(new Intent(SignUpActivity.this.getApplicationContext(), Sender.class));
 
-                aws.sendMessage("bletracking" , "Test msg : " + (new Date()).toString());
+                aws.sendMessage("bletracking", "Test msg : " + (new Date()).toString());
 
             }
         });
 
         //startService();
     }
+
     AWSSubscriber aws;
 
     public void setSharedPrefernces() {
@@ -367,8 +366,6 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
 
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -412,8 +409,8 @@ public class SignUpActivity extends AppCompatActivity {
                 options.inSampleSize = 2;
                 bitmap = BitmapFactory.decodeFile(filePath, options);
 
-            } catch(Throwable e) {
-               Log.e("Error" , "Bitmao Error : " + e.toString());
+            } catch (Throwable e) {
+                Log.e("Error", "Bitmao Error : " + e.toString());
             }
         }
 
@@ -453,6 +450,8 @@ public class SignUpActivity extends AppCompatActivity {
                 for (String perms : permissionsToRequest) {
                     if (hasPermission(perms)) {
 
+                    } else if (!shouldShowRequestPermissionRationale(permissions[0])) {
+                        showSettingScreen();
                     } else {
                         permissionsRejected.add(perms);
                     }
@@ -497,9 +496,30 @@ public class SignUpActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton("Cancel", okListener)
                 .create()
                 .show();
+    }
+
+    private void showSettingScreen() {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle("Alert");
+        alertDialog.setMessage("Alert message to be shown");
+        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Setting",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent i = new Intent();
+                        i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        i.addCategory(Intent.CATEGORY_DEFAULT);
+                        i.setData(Uri.parse("package:" + getApplicationContext().getPackageName()));
+                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                        i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                        getApplicationContext().startActivity(i);
+                        dialog.dismiss();
+                    }
+                });
+        alertDialog.show();
     }
 
     private boolean canMakeSmores() {
