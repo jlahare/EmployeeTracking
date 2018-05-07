@@ -43,7 +43,7 @@ public class Sender extends Service implements BeaconConsumer {
     private final int TIMER_DELAY = 8000;
     private final String TAG = "Beacon";
     private AWSSubscriber mqttManager;
-    private String topic = "bletracking";
+    private String topic = "bletracker";
 
     @Override
     public void onStart(Intent intent, int startId) {

@@ -25,6 +25,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -166,6 +167,48 @@ public class SignUpActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "For proper working of this application bluetooth needs to TURN ON.", Toast.LENGTH_LONG).show();
                     }*/
                 }
+
+
+                boolean allAllowed = true;
+                for (String perms : permissionsToRequest)
+                {
+                    if (!hasPermission(perms)) {
+                        allAllowed = false;
+                        break;
+                    }
+                }
+
+                if(allAllowed == false)
+                {
+                    Toast toast = Toast.makeText(getApplicationContext(), "For proper working of this app needs to provide all permissions, go to setting > permissions.", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER_VERTICAL ,0 , 0);
+                    toast.show();
+                    return;
+                }
+
+
+                try {
+                    String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+
+                    if (!provider.contains("gps"))
+                    { //if gps is disabled
+                        Toast toast = Toast.makeText(getApplicationContext(), "Please TURN ON gps location for proper working of this app.", Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER_VERTICAL ,0 , 0);
+                        toast.show();
+                        Intent poke = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        SignUpActivity.this.startActivity(poke);
+
+                        return;
+                    }
+                }catch (Throwable throwable)
+                {
+
+                }
+
+
+
+
+
                 if (Utils.base64Image == null) {
                     Toast.makeText(getApplicationContext(), "Please select profile pic", Toast.LENGTH_LONG).show();
                 } else if (TextUtils.isEmpty(firstName.getText())) {
@@ -451,7 +494,9 @@ public class SignUpActivity extends AppCompatActivity {
                     if (hasPermission(perms)) {
 
                     } else if (!shouldShowRequestPermissionRationale(permissions[0])) {
-                        showSettingScreen();
+                        Toast toast = Toast.makeText(getApplicationContext(), "For proper working of this app all the permission are required.", Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER_VERTICAL ,0 , 0);
+                        toast.show();
                     } else {
                         permissionsRejected.add(perms);
                     }
@@ -501,26 +546,7 @@ public class SignUpActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void showSettingScreen() {
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle("Alert");
-        alertDialog.setMessage("Alert message to be shown");
-        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Setting",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent i = new Intent();
-                        i.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        i.addCategory(Intent.CATEGORY_DEFAULT);
-                        i.setData(Uri.parse("package:" + getApplicationContext().getPackageName()));
-                        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                        i.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-                        getApplicationContext().startActivity(i);
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.show();
-    }
+
 
     private boolean canMakeSmores() {
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
