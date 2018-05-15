@@ -219,7 +219,7 @@
             <Button
                 android:id="@+id/signUp"
 
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginLeft="@dimen/margin_5"
@@ -238,7 +238,7 @@
                 android:layout_height="wrap_content"
 
                 android:text="Start"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/stopBtn"
@@ -246,14 +246,15 @@
                 android:layout_height="wrap_content"
 
                 android:text="Stop"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/testBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Msg" />
+                android:text="Msg"
+                android:visibility="gone" />
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

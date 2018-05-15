@@ -40,7 +40,7 @@ import java.util.TimerTask;
 public class Sender extends Service implements BeaconConsumer {
     private boolean isRunning = false;
     private Timer executor = null;
-    private final int TIMER_DELAY = 8000;
+    private final int TIMER_DELAY = 1000;
     private final String TAG = "Beacon";
     private AWSSubscriber mqttManager;
     private String topic = "bletracker";
@@ -138,6 +138,7 @@ public class Sender extends Service implements BeaconConsumer {
                     jsonChild.put("rssi", beaconInfo.getSignal());
                     jsonChild.put("uuid", beaconInfo.getUuid());
                     jsonChild.put("timeStamp", beaconInfo.getTimeStamp());
+                    jsonChild.put("txPower", beaconInfo.getPower());
 
                     json.put("beacon", jsonChild);
 
